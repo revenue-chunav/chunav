@@ -67,7 +67,6 @@
         }
         .check { font-size: 3rem; }
         
-        /* 📢 પરિણામ ટેમ્પલેટ */
         .result-panel {
             background: #f0fdf4;
             border: 2px solid #bbf7d0;
@@ -113,15 +112,15 @@
         <h1>મહેસુલી કર્મચારી મંડળ ચૂંટણી</h1>
         <div class="timer" id="clock">ચૂંટણી ગણતરી ચાલુ છે...</div>
 
-        <!-- વોટિંગ વિભાગ -->
+        <!-- વોટિંગ વિભાગ (બટન ઇંગ્લિશમાં કરી દીધા છે) -->
         <div id="voteSection">
             <div class="card">
                 <span class="name">૧. વિષ્ણૂ ભાઇ દેસાઇ</span>
-                <button class="btn" onclick="submitVote(1)">વોટ આપો</button>
+                <button class="btn" onclick="submitVote(1)">Vote Now</button>
             </div>
             <div class="card">
                 <span class="name">૨. હિતેશભાઇ રાઠવા</span>
-                <button class="btn" onclick="submitVote(2)">વોટ આપો</button>
+                <button class="btn" onclick="submitVote(2)">Vote Now</button>
             </div>
         </div>
 
@@ -130,7 +129,7 @@
             તમારો મત સફળતાપૂર્વક પેટીમાં નોંધાઈ ગયો છે!
         </div>
 
-        <!-- 📢 હોમ પેજ પર પરિણામ (જ્યારે એડમીન ઓન કરે ત્યારે જ ખુલશે) -->
+        <!-- હોમ પેજ પર પરિણામ -->
         <div id="finalResultView" class="result-panel">
             <h3 class="result-title">📢 ચૂંટણીનું અંતિમ વિજેતા પરિણામ</h3>
             <div class="result-row" style="color: #1e3a8a;">૧. વિષ્ણૂ ભાઇ દેસાઇ: <span id="v1">0</span> મત</div>
@@ -174,7 +173,6 @@
         let dataLogs = JSON.parse(localStorage.getItem('el_l_data_s2')) || [];
         let dataPublish = JSON.parse(localStorage.getItem('el_p_state_s2')) || false;
 
-        // ૧૫ દિવસ ટાઈમર લોજીક
         let endTime = localStorage.getItem('el_t_data_s2');
         if (!endTime) {
             endTime = new Date().getTime() + (15 * 24 * 60 * 60 * 1000);
@@ -232,3 +230,9 @@
                 document.getElementById('voteSuccess').style.display = 'none';
                 if (!dataPublish) document.getElementById('voteSection').style.display = 'block';
             }, 2000);
+
+            renderViews();
+        }
+
+        function showLogin() {
+            let form = document.getElementById('loginForm');
