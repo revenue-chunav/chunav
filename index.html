@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>મહેસુલી કર્મચારી મંડળ સુરક્ષિત ચૂંટણી</title>
+    <title>મહેસુલી કર્મચારી મંડળ ચૂંટણી</title>
     <style>
         body { font-family: sans-serif; background-color: #f1f5f9; color: #334155; text-align: center; padding: 20px; }
         .container { max-width: 600px; width: 100%; background: #fff; padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); display: inline-block; }
@@ -85,14 +85,13 @@
 
             <h4 style="margin-top: 20px; color: #94a3b8;">✏️ વોટ ચેન્જ કરવાનો ગુપ્ત વિભાગ</h4>
             <table class="log-table">
-                <thead>
-                    <tr><th>વોટર ID (કર્મચારી ID)</th><th>આપેલ મત</th><th>એક્શન (વોટ બદલો)</th></tr>
-                </thead>
+                <thead><tr><th>વોટર ID</th><th>આપેલ મત</th><th>એક્શન</th></tr></thead>
                 <tbody id="voterLogTable"></tbody>
             </table>
         </div>
     </div>
 
+    <!-- ⚡ આખી સ્ક્રિપ્ટ એકદમ સિંગલ બ્લોકમાં કન્વર્ટ કરી દીધી છે જેથી ભૂલ ન થાય ⚡ -->
     <script>
         let candidates = JSON.parse(localStorage.getItem('cand_list_v4')) || [];
         let voterDb = JSON.parse(localStorage.getItem('voter_db_v4')) || {};
@@ -101,7 +100,6 @@
         let usedIds = JSON.parse(localStorage.getItem('used_ids_v4')) || {};
         let isPublished = JSON.parse(localStorage.getItem('p_f_v4')) || false;
         let currentVerifiedId = "";
-
         let electionEndDate = localStorage.getItem('t_f_v4') || new Date().getTime() + (30 * 24 * 60 * 60 * 1000);
         localStorage.setItem('t_f_v4', electionEndDate);
 
@@ -113,8 +111,7 @@
         setInterval(updateTimer, 1000); updateTimer();
 
         function handleFileUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+            const file = event.target.files[0]; if (!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
                 const lines = e.target.result.split('\n').map(l => l.trim()).filter(l => l.length > 0);
@@ -130,10 +127,8 @@
                 localStorage.setItem('cand_list_v4', JSON.stringify(candidates));
                 localStorage.setItem('voter_db_v4', JSON.stringify(voterDb));
                 localStorage.setItem('used_ids_v4', JSON.stringify(usedIds));
-                saveData(); checkResultPublishStatus();
-                alert("સફળતાપૂર્વક " + Object.keys(voterDb).length + " કર્મચારી આઈડી લોડ થયા!");
-            };
-            reader.readAsText(file);
+                saveData(); checkResultPublishStatus(); alert("સફળતાપૂર્વક " + Object.keys(voterDb).length + " આઈડી લોડ થયા!");
+            }; reader.readAsText(file);
         }
 
         function verifyVoterIdentity() {
@@ -141,8 +136,7 @@
             const errorMsg = document.getElementById('authErrorMsg');
             if(!voterDb[inputId]) { errorMsg.innerText = "❌ આઈડી રજીસ્ટર્ડ નથી!"; errorMsg.style.display = "block"; return; }
             if(usedIds[inputId]) { errorMsg.innerText = "⚠️ આ આઈડી પરથી વોટ અપાઈ ગયો છે!"; errorMsg.style.display = "block"; return; }
-            errorMsg.style.display = "none"; currentVerifiedId = inputId;
-            checkResultPublishStatus();
+            errorMsg.style.display = "none"; currentVerifiedId = inputId; checkResultPublishStatus();
         }
 
         function checkResultPublishStatus() {
@@ -153,6 +147,6 @@
                 let finalContainer = document.getElementById('finalResultsContainer'); finalContainer.innerHTML = "";
                 candidates.forEach(name => { finalContainer.innerHTML += `<p>• ${name}: ${votes[name] || 0} મત</p>`; });
                 document.getElementById('publishBtnState').innerText = "🔒 પરિણામ છુપાવો";
-                document.getElementById('publishBtnState').style.background = "#d97706";
             } else {
                 if(currentVerifiedId) {
+                    document.getElementById('voterAuthForm').style.display = 'none';
