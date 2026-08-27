@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>મહેસુલી કર્મચારી મંડળ ચૂંટણી</title>
+    <title>મહેસુલી કર્મચારી મંડળ સુરક્ષિત ચૂંટણી</title>
     <style>
         body { font-family: sans-serif; background-color: #f1f5f9; color: #334155; text-align: center; padding: 20px; }
         .container { max-width: 600px; width: 100%; background: #fff; padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); display: inline-block; }
@@ -85,13 +85,14 @@
 
             <h4 style="margin-top: 20px; color: #94a3b8;">✏️ વોટ ચેન્જ કરવાનો ગુપ્ત વિભાગ</h4>
             <table class="log-table">
-                <thead><tr><th>વોટર ID</th><th>આપેલ મત</th><th>એક્શન</th></tr></thead>
+                <thead>
+                    <tr><th>વોટર ID</th><th>આપેલ મત</th><th>એક્શન</th></tr>
+                </thead>
                 <tbody id="voterLogTable"></tbody>
             </table>
         </div>
     </div>
 
-    <!-- ⚡ આખી સ્ક્રિપ્ટ એકદમ સિંગલ બ્લોકમાં કન્વર્ટ કરી દીધી છે જેથી ભૂલ ન થાય ⚡ -->
     <script>
         let candidates = JSON.parse(localStorage.getItem('cand_list_v4')) || [];
         let voterDb = JSON.parse(localStorage.getItem('voter_db_v4')) || {};
