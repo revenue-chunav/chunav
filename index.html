@@ -4,41 +4,151 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>મહેસુલી કર્મચારી મંડળ ચૂંટણી</title>
-    <!-- ૧૦0% ગેરંટી સાથે બધે જ લોડ થતી સત્તાવાર સુપાબેઝ લિંક -->
-    <script src="https://cloudflare.com"></script>
     <style>
-        :root { --primary: #1e3a8a; --secondary: #10b981; --bg: #f3f4f6; --text: #1f2937; }
-        body { font-family: sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .container { max-width: 600px; width: 100%; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; margin-bottom: 20px; }
-        h1 { color: var(--primary); }
-        .timer { background: #ffe4e6; color: #be123c; padding: 10px; border-radius: 6px; font-weight: bold; margin-bottom: 25px; }
-        .candidate-card { border: 2px solid #e5e7eb; border-radius: 8px; padding: 20px; margin: 15px 0; display: flex; justify-content: space-between; align-items: center; }
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #10b981;
+            --bg: #f3f4f6;
+            --text: #1f2937;
+        }
+        
+        body {
+            font-family: sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 { color: var(--primary); margin-bottom: 5px; }
+        h3 { color: #555; margin-top: 0; }
+
+        .timer {
+            background: #ffe4e6;
+            color: #be123c;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+
+        .candidate-card {
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
         .candidate-name { font-size: 1.2rem; font-weight: bold; }
-        .vote-btn { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        .success-box { display: none; color: var(--secondary); font-size: 1.5rem; font-weight: bold; margin-top: 20px; }
-        .checkmark { font-size: 3rem; }
-        .admin-section { margin-top: 30px; border-top: 2px dashed #ccc; padding-top: 20px; width: 100%; max-width: 600px; }
+
+        .vote-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .vote-btn:hover { background: #111827; }
+
+        .success-box {
+            display: none;
+            color: var(--secondary);
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .checkmark { font-size: 3rem; color: var(--secondary); }
+
+        .admin-section {
+            margin-top: 30px;
+            border-top: 2px dashed #ccc;
+            padding-top: 20px;
+            width: 100%;
+            max-width: 600px;
+        }
+
         .hidden { display: none !important; }
-        .admin-btn { background: #4b5563; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
-        .admin-panel { background: #1e293b; color: white; padding: 25px; border-radius: 8px; margin-top: 15px; text-align: left; }
-        .log-table { width: 100%; border-collapse: collapse; margin-top: 15px; color: white; }
-        .log-table th, .log-table td { border: 1px solid #475569; padding: 10px; text-align: left; }
+
+        .admin-btn {
+            background: #4b5563;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .admin-panel {
+            background: #1e293b;
+            color: white;
+            padding: 25px;
+            border-radius: 8px;
+            margin-top: 15px;
+            text-align: left;
+        }
+
+        .admin-panel h2 { color: #f59e0b; margin-top: 0; }
+
+        .log-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            color: white;
+        }
+
+        .log-table th, .log-table td {
+            border: 1px solid #475569;
+            padding: 10px;
+            text-align: left;
+        }
+
         .log-table th { background: #334155; }
-        .change-btn { background: #d97706; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
+
+        .change-btn {
+            background: #d97706;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h1>મહેસુલી કર્મચારી મંડળ ચૂંટણી</h1>
+        <h3>તમારો કિંમતી વોટ આપો</h3>
+        
         <div class="timer" id="countdown">ચૂંટણીનો સમયગાળો ચાલુ છે...</div>
 
-        <!-- મતદાન સેક્શન -->
         <div id="votingForm">
             <div class="candidate-card">
                 <span class="candidate-name">વિષ્ણૂ ભાઇ દેસાઇ</span>
                 <button class="vote-btn" onclick="castVote(1)">વોટ આપો</button>
             </div>
+
             <div class="candidate-card">
                 <span class="candidate-name">હિતેશભાઇ રાઠવા</span>
                 <button class="vote-btn" onclick="castVote(2)">વોટ આપો</button>
@@ -47,29 +157,35 @@
 
         <div id="successMessage" class="success-box">
             <div class="checkmark">✓</div>
-            તમારો વોટ ઓનલાઈન સફળતાપૂર્વક નોંધાઈ ગયો છે!
+            તમારો વોટ સફળતાપૂર્વક નોંધાઈ ગયો છે!
         </div>
     </div>
 
-    <!-- ગુપ્ત એડમીન પેનલ સેક્શન -->
+    <!-- ગુપ્ત એડમીન સેક્શન -->
     <div class="admin-section">
         <button class="admin-btn" onclick="toggleAdminLogin()">એડમીન લોગિન (ગુપ્ત)</button>
+        
         <div id="adminLoginForm" class="hidden" style="margin-top: 10px;">
-            <input type="password" id="adminPassword" placeholder="પાસવર્ડ નાખો" style="padding:8px; border-radius:4px; border:1px solid #ccc;">
+            <input type="password" id="adminPassword" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;" placeholder="એડમીન પાસવર્ડ નાખો">
             <button class="vote-btn" style="padding: 8px 15px;" onclick="verifyAdmin()">પ્રવેશ કરો</button>
         </div>
 
         <div id="hiddenAdminPanel" class="admin-panel hidden">
             <h2>📊 એડમીન લાઇવ ડેશબોર્ડ (ગુપ્ત પેજ)</h2>
+            
             <div style="background: #334155; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
-                <p><strong>વિષ્ણૂ ભાઇ દેસાઇ:</strong> <span id="count1" style="color:#10b981; font-size:1.5rem;">0</span> વોટ</p>
-                <p><strong>હિતેશભાઇ રાઠવા:</strong> <span id="count2" style="color:#10b981; font-size:1.5rem;">0</span> વોટ</p>
+                <p><strong>વિષ્ણૂ ભાઇ દેસાઇ:</strong> <span id="count1" style="font-size: 1.5rem; color: #10b981;">0</span> વોટ</p>
+                <p><strong>હિતેશભાઇ રાઠવા:</strong> <span id="count2" style="font-size: 1.5rem; color: #10b981;">0</span> વોટ</p>
             </div>
 
-            <h3>✏️ વોટ ચેન્જ સેક્શન</h3>
+            <h3>✏️ વોટર્સ લિસ્ટ અને વોટ ચેન્જ સેક્શન</h3>
             <table class="log-table">
                 <thead>
-                    <tr><th>વોટર ID</th><th>આપેલ વોટ</th><th>એક્શન (વોટ બદલો)</th></tr>
+                    <tr>
+                        <th>વોટર ID</th>
+                        <th>આપેલ વોટ</th>
+                        <th>એક્શન (વોટ બદલો)</th>
+                    </tr>
                 </thead>
                 <tbody id="voterLogTable"></tbody>
             </table>
@@ -77,122 +193,104 @@
     </div>
 
     <script>
-        const SUPABASE_URL = "https://supabase.co";
-        const SUPABASE_ANON_KEY = "sb_publishable_O2NucTh0K_0Vl-Sdx2-q2Q_Tn3yG_5Z_6Vd_8U_1X_0Z_8W_2Q";
-        
-        let supabaseClient;
-        
-        // સુરક્ષિત કનેક્શન ચેકિંગ
-        try {
-            if (window.supabase) {
-                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            }
-        } catch(e) {
-            console.error("કનેક્શન એરર: ", e);
+        // ડેટા લોકલ સેવ રાખવા માટેની સ્વતંત્ર વ્યવસ્થા
+        let votes = JSON.parse(localStorage.getItem('election_votes_final')) || { 1: 0, 2: 0 };
+        let voterLog = JSON.parse(localStorage.getItem('voter_log_final')) || [];
+
+        // ૧૫ દિવસનું ટાઈમર કાઉન્ટડાઉન
+        let electionEndDate = localStorage.getItem('election_end_date_final');
+        if (!electionEndDate) {
+            electionEndDate = new Date().getTime() + (15 * 24 * 60 * 60 * 1000);
+            localStorage.setItem('election_end_date_final', electionEndDate);
         }
 
-        // ૧૫ દિવસનું ટાઈમર સેટઅપ
-        let electionEndDate = new Date().getTime() + (15 * 24 * 60 * 60 * 1000);
         function updateTimer() {
             let now = new Date().getTime();
             let distance = electionEndDate - now;
             let days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            if (distance < 0) { document.getElementById("countdown").innerHTML = "ચૂંટણી પૂર્ણ થઈ ગઈ છે!"; }
-            else { document.getElementById("countdown").innerHTML = `ચૂંટણી સમયગાળો: ${days} દિવસ બાકી`; }
+            if (distance < 0) {
+                document.getElementById("countdown").innerHTML = "ચૂંટણી પૂર્ણ થઈ ગઈ છે!";
+            } else {
+                document.getElementById("countdown").innerHTML = `ચૂંટણી સમયગાળો: ${days} દિવસ બાકી`;
+            }
         }
         setInterval(updateTimer, 1000);
         updateTimer();
 
-        // ઓનલાઈન વોટ આપવો
-        async function castVote(candidateId) {
-            if (!supabaseClient) {
-                alert("લાઇબ્રેરી બ્લોક હોવાથી ઓનલાઈન કનેક્શન થઈ શક્યું નથી. કૃપા કરીને હાર્ડ રીફ્રેશ (Ctrl+F5) કરો.");
-                return;
-            }
+        // વોટ આપવાની પ્રોસેસ
+        function castVote(candidateId) {
+            votes[candidateId]++;
+            
+            let voterId = "VOTER_" + Math.floor(1000 + Math.random() * 9000);
+            voterLog.push({ voterId: voterId, votedTo: candidateId });
+            
+            saveData();
 
-            const { data, error } = await supabaseClient
-                .from('votes')
-                .insert([{ voted_to: candidateId }]);
+            // ખરાનું નિશાન (✓) બતાવવું
+            document.getElementById('votingForm').classList.add('hidden');
+            document.getElementById('successMessage').style.display = 'block';
+            
+            setTimeout(() => {
+                document.getElementById('votingForm').classList.remove('hidden');
+                document.getElementById('successMessage').style.display = 'none';
+            }, 3000);
 
-            if (!error) {
-                document.getElementById('votingForm').classList.add('hidden');
-                document.getElementById('successMessage').style.display = 'block';
-                setTimeout(() => {
-                    document.getElementById('votingForm').classList.remove('hidden');
-                    document.getElementById('successMessage').style.display = 'none';
-                }, 3000);
-            } else {
-                alert("વોટ સેવ કરવામાં ભૂલ આવી: " + error.message + "\nકૃપા કરીને તમારા Supabase માં RLS સેટિંગ બંધ (Disable) કરો.");
-            }
+            renderAdminData();
         }
 
-        function toggleAdminLogin() { document.getElementById('adminLoginForm').classList.toggle('hidden'); }
+        function toggleAdminLogin() {
+            document.getElementById('adminLoginForm').classList.toggle('hidden');
+        }
 
+        // એડમીન પાસવર્ડ ચેક
         function verifyAdmin() {
-            if(document.getElementById('adminPassword').value === "admin123") {
+            let pass = document.getElementById('adminPassword').value;
+            if(pass === "admin123") {
                 document.getElementById('hiddenAdminPanel').classList.remove('hidden');
                 document.getElementById('adminLoginForm').classList.add('hidden');
-                loadLiveVotes();
-                
-                if (supabaseClient) {
-                    supabaseClient.channel('custom-all-channel')
-                    .on('postgres_changes', { event: '*', filter: 'table=eq.votes' }, payload => {
-                        loadLiveVotes();
-                    }).subscribe();
-                }
-            } else { alert("ખોટો પાસવર્ડ!"); }
+                renderAdminData();
+            } else {
+                alert("ખોટો પાસવર્ડ!");
+            }
         }
 
-        // એડમીન માટે લાઈવ ડેટા લોડ કરવો
-        async function loadLiveVotes() {
-            if (!supabaseClient) return;
+        function renderAdminData() {
+            document.getElementById('count1').innerText = votes[1];
+            document.getElementById('count2').innerText = votes[2];
 
-            const { data: votesData, error } = await supabaseClient
-                .from('votes')
-                .select('*')
-                .order('id', { ascending: true });
-
-            if (error) return;
-
-            let c1 = 0, c2 = 0;
             let tableBody = document.getElementById('voterLogTable');
             tableBody.innerHTML = "";
 
-            votesData.forEach((row) => {
-                let votedTo = row.voted_to;
-                if(votedTo == 1) c1++;
-                if(votedTo == 2) c2++;
+            voterLog.forEach((log, index) => {
+                let candidateName = log.votedTo === 1 ? "વિષ્ણૂ ભાઇ દેસાઇ" : "હિતેશભાઇ રાઠવા";
+                let alternativeId = log.votedTo === 1 ? 2 : 1;
+                let alternativeName = alternativeId === 1 ? "વિષ્ણૂ ભાઇ દેસાઇ" : "હિતેશભાઇ રાઠવા";
 
-                let cName = votedTo == 1 ? "વિષ્ણૂ ભાઇ દેસાઇ" : "હિતેશભાઇ રાઠવા";
-                let altId = votedTo == 1 ? 2 : 1;
-                let altName = votedTo == 1 ? "હિતેશભાઇ રાઠવા" : "વિષ્ણૂ ભાઇ દેસાઇ";
-
-                tableBody.innerHTML += `
-                    <tr>
-                        <td>VOTER_${row.id}</td>
-                        <td><span style="color:#6ee7b7">${cName}</span></td>
-                        <td><button class="change-btn" onclick="changeVote(${row.id}, ${altId})">બદલીને "${altName}" કરો</button></td>
-                    </tr>`;
+                tableBody.innerHTML += `<tr>
+                    <td>${log.voterId}</td>
+                    <td><span style="color:#6ee7b7">${candidateName}</span></td>
+                    <td>
+                        <button class="change-btn" onclick="changeVote(${index}, ${alternativeId})">
+                            બદલીને "${alternativeName}" કરો
+                        </button>
+                    </td>
+                </tr>`;
             });
-
-            document.getElementById('count1').innerText = c1;
-            document.getElementById('count2').innerText = c2;
         }
 
-        // ઓનલાઈન વોટ બદલવો
-        async function changeVote(voterRowId, newCandidateId) {
-            if (!supabaseClient) return;
-
-            const { data, error } = await supabaseClient
-                .from('votes')
-                .update({ voted_to: newCandidateId })
-                .eq('id', voterRowId);
-
-            if (!error) {
-                alert("વોટ ઓનલાઈન સફળતાપૂર્વક બદલાઈ ગયો!");
-                loadLiveVotes();
-            }
+        // એડમીન દ્વારા વોટ ચેન્જ કરવો
+        function changeVote(index, newCandidateId) {
+            let oldCandidateId = voterLog[index].votedTo;
+            votes[oldCandidateId]--;
+            votes[newCandidateId]++;
+            voterLog[index].votedTo = newCandidateId;
+            
+            saveData();
+            renderAdminData();
+            alert("વોટ સફળતાપૂર્વક બદલાઈ ગયો છે!");
         }
-    </script>
-</body>
-</html>
+
+        function saveData() {
+            localStorage.setItem('election_votes_final', JSON.stringify(votes));
+            localStorage.setItem('voter_log_final', JSON.stringify(voterLog));
+        }
