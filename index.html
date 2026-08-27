@@ -5,278 +5,230 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>મહેસુલી કર્મચારી મંડળ ચૂંટણી</title>
     <style>
-        :root {
-            --primary: #1e3a8a;
-            --secondary: #10b981;
-            --bg: #f3f4f6;
-            --text: #1f2937;
-        }
-        
         body {
-            font-family: sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f1f5f9;
+            color: #334155;
             margin: 0;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
-
         .container {
-            max-width: 600px;
+            max-width: 550px;
             width: 100%;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
             text-align: center;
             margin-bottom: 20px;
         }
-
-        h1 { color: var(--primary); margin-bottom: 5px; }
-        h3 { color: #555; margin-top: 0; }
-
+        h1 { color: #1e3a8a; font-size: 1.6rem; margin-bottom: 5px; }
         .timer {
-            background: #ffe4e6;
-            color: #be123c;
-            padding: 10px;
-            border-radius: 6px;
+            background: #fef2f2;
+            color: #991b1b;
+            padding: 8px 12px;
+            border-radius: 30px;
             font-weight: bold;
-            margin-bottom: 25px;
+            display: inline-block;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
         }
-
-        .candidate-card {
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 15px 0;
+        .card {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 18px;
+            margin: 12px 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
             background: #fff;
         }
-
-        .candidate-name { font-size: 1.3rem; font-weight: bold; color: #111827; }
-
-        .vote-btn {
-            background: var(--primary);
-            color: white;
+        .name { font-size: 1.2rem; font-weight: bold; color: #1e293b; }
+        .btn {
+            background: #1e3a8a;
+            color: #fff;
             border: none;
             padding: 10px 20px;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 1rem;
             font-weight: bold;
+            font-size: 0.95rem;
         }
-
-        .vote-btn:hover { background: #111827; }
-
-        .success-box {
+        .btn:hover { background: #0f172a; }
+        .success {
             display: none;
-            color: var(--secondary);
-            font-size: 1.5rem;
+            color: #10b981;
+            font-size: 1.4rem;
             font-weight: bold;
-            margin-top: 20px;
+            margin-top: 15px;
         }
-        .checkmark { font-size: 3rem; color: var(--secondary); }
-
-        /* 📊 હોમ પેજ રીઝલ્ટ સેક્શન */
-        .result-box {
+        .check { font-size: 3rem; }
+        
+        /* 📢 પરિણામ ટેમ્પલેટ */
+        .result-panel {
             background: #f0fdf4;
             border: 2px solid #bbf7d0;
             padding: 20px;
-            border-radius: 8px;
+            border-radius: 12px;
+            margin-top: 15px;
+            text-align: left;
+            display: none;
+        }
+        .result-title { color: #166534; text-align: center; margin-top: 0; }
+        .result-row { font-size: 1.15rem; margin: 12px 0; font-weight: bold; }
+
+        .admin-box {
+            width: 100%;
+            max-width: 550px;
             margin-top: 20px;
-            text-align: left;
+            border-top: 1px dashed #cbd5e1;
+            padding-top: 15px;
+            text-align: center;
         }
-        .result-box h2 { color: #166534; text-align: center; margin-top: 0; }
-        .result-item { font-size: 1.2rem; margin: 10px 0; font-weight: bold; color: #1f2937; }
-
-        .admin-section {
-            margin-top: 30px;
-            border-top: 2px dashed #ccc;
-            padding-top: 20px;
-            width: 100%;
-            max-width: 600px;
-        }
-
-        .hidden { display: none !important; }
-
-        .admin-btn {
-            background: #4b5563;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
+        .admin-link { background: none; border: none; color: #64748b; cursor: pointer; text-decoration: underline; }
+        .admin-form { display: none; margin-top: 10px; }
+        .input { padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; width: 180px; margin-right: 5px; }
         .admin-panel {
-            background: #1e293b;
-            color: white;
-            padding: 25px;
-            border-radius: 8px;
+            background: #0f172a;
+            color: #fff;
+            padding: 20px;
+            border-radius: 12px;
             margin-top: 15px;
             text-align: left;
+            display: none;
         }
-
-        .admin-panel h2 { color: #f59e0b; margin-top: 0; }
-
-        .log-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            color: white;
-        }
-
-        .log-table th, .log-table td {
-            border: 1px solid #475569;
-            padding: 10px;
-            text-align: left;
-        }
-
-        .log-table th { background: #334155; }
-
-        .change-btn {
-            background: #d97706;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .reset-btn {
-            background: #dc2626;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .reset-btn:hover { background: #b91c1c; }
-
-        .publish-btn {
-            background: #2563eb;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-right: 10px;
-        }
-        .publish-btn:hover { background: #1d4ed8; }
+        .table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .table th, .table td { border: 1px solid #334155; padding: 10px; text-align: left; }
+        .table th { background: #1e293b; color: #94a3b8; }
+        .action-btn { background: #ea580c; color: #fff; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
+        .ctrl-btn { border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h1>મહેસુલી કર્મચારી મંડળ ચૂંટણી</h1>
-        <h3>તમારો કિંમતી વોટ આપો</h3>
-        
-        <div class="timer" id="countdown">ચૂંટણીનો સમયગાળો ચાલુ છે...</div>
+        <div class="timer" id="clock">ચૂંટણી ગણતરી ચાલુ છે...</div>
 
-        <!-- મતદાન ફોર્મ -->
-        <div id="votingForm">
-            <div class="candidate-card">
-                <span class="candidate-name">વિષ્ણૂ ભાઇ દેસાઇ</span>
-                <button class="vote-btn" onclick="castVote(1)">વોટ આપો</button>
+        <!-- વોટિંગ વિભાગ -->
+        <div id="voteSection">
+            <div class="card">
+                <span class="name">૧. વિષ્ણૂ ભાઇ દેસાઇ</span>
+                <button class="btn" onclick="submitVote(1)">વોટ આપો</button>
             </div>
-
-            <div class="candidate-card">
-                <span class="candidate-name">હિતેશભાઇ રાઠવા</span>
-                <button class="vote-btn" onclick="castVote(2)">વોટ આપો</button>
+            <div class="card">
+                <span class="name">૨. હિતેશભાઇ રાઠવા</span>
+                <button class="btn" onclick="submitVote(2)">વોટ આપો</button>
             </div>
         </div>
 
-        <div id="successMessage" class="success-box">
-            <div class="checkmark">✓</div>
-            તમારો વોટ સફળતાપૂર્વક નોંધાઈ ગયો છે!
+        <div id="voteSuccess" class="success">
+            <div class="check">✓</div>
+            તમારો મત સફળતાપૂર્વક પેટીમાં નોંધાઈ ગયો છે!
         </div>
 
-        <!-- 📢 હોમ પેજ પરિણામ બોક્સ (શરૂઆતમાં છુપાયેલું રહેશે) -->
-        <div id="homeResultBox" class="result-box hidden">
-            <h2>📢 ચૂંટણીનું અંતિમ પરિણામ</h2>
-            <div class="result-item" style="border-left: 5px solid #2563eb; padding-left: 10px;">
-                ૧. વિષ્ણૂ ભાઇ દેસાઇ: <span id="homeCount1" style="color: #2563eb; font-size: 1.4rem;">0</span> મત
-            </div>
-            <div class="result-item" style="border-left: 5px solid #d97706; padding-left: 10px;">
-                ૨. હિતેશભાઇ રાઠવા: <span id="homeCount2" style="color: #d97706; font-size: 1.4rem;">0</span> મત
-            </div>
+        <!-- 📢 હોમ પેજ પર પરિણામ (જ્યારે એડમીન ઓન કરે ત્યારે જ ખુલશે) -->
+        <div id="finalResultView" class="result-panel">
+            <h3 class="result-title">📢 ચૂંટણીનું અંતિમ વિજેતા પરિણામ</h3>
+            <div class="result-row" style="color: #1e3a8a;">૧. વિષ્ણૂ ભાઇ દેસાઇ: <span id="v1">0</span> મત</div>
+            <div class="result-row" style="color: #ea580c;">૨. હિતેશભાઇ રાઠવા: <span id="v2">0</span> મત</div>
         </div>
     </div>
 
-    <!-- ગુપ્ત એડમીન સેક્શન -->
-    <div class="admin-section">
-        <button class="admin-btn" onclick="toggleAdminLogin()">એડમીન લોગિન (ગુપ્ત)</button>
+    <!-- એડમીન સેટઅપ વિભાગ -->
+    <div class="admin-box">
+        <button class="admin-link" onclick="showLogin()">🔐 ગુપ્ત એડમીન વિભાગ</button>
         
-        <div id="adminLoginForm" class="hidden" style="margin-top: 10px;">
-            <input type="password" id="adminPassword" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;" placeholder="એડમીન પાસવર્ડ નાખો">
-            <button class="vote-btn" style="padding: 8px 15px;" onclick="verifyAdmin()">પ્રવેશ કરો</button>
+        <div id="loginForm" class="admin-form">
+            <input type="password" id="passCode" class="input" placeholder="ગુપ્ત પાસવર્ડ લખો">
+            <button class="btn" style="padding: 8px 15px;" onclick="checkLogin()">પ્રવેશ કરો</button>
         </div>
 
-        <div id="hiddenAdminPanel" class="admin-panel hidden">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #475569; padding-bottom: 10px; margin-bottom: 15px;">
-                <h2 style="margin: 0;">📊 એડમીન લાઇવ ડેશબોર્ડ</h2>
+        <div id="dashboard" class="admin-panel">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 10px; margin-bottom: 15px;">
+                <h3 style="margin: 0; color: #f59e0b;">📊 લાઇવ વોટિંગ મોનિટર</h3>
                 <div>
-                    <!-- 📢 પરિણામ જાહેર કરવાનું બટન -->
-                    <button id="publishBtnState" class="publish-btn" onclick="togglePublishResult()">📢 પરિણામ જાહેર કરો</button>
-                    <button class="reset-btn" onclick="resetElectionData()">🔄 ચૂંટણી રીસેટ કરો</button>
+                    <button id="pubStatus" class="ctrl-btn" style="background: #2563eb; color: #fff; margin-right: 5px;" onclick="togglePublish()">📢 પરિણામ જાહેર કરો</button>
+                    <button class="ctrl-btn" style="background: #dc2626; color: #fff;" onclick="clearAllData()">🔄 રીસેટ ઓપ્શન</button>
                 </div>
             </div>
             
-            <div style="background: #334155; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
-                <p style="font-size: 1.1rem;"><strong>વિષ્ણૂ ભાઇ દેસાઇ:</strong> કુલ મળેલ મત: <span id="count1" style="font-size: 1.5rem; color: #10b981; font-weight: bold;">0</span></p>
-                <p style="font-size: 1.1rem;"><strong>હિતેશભાઇ રાઠવા:</strong> કુલ મળેલ મત: <span id="count2" style="font-size: 1.5rem; color: #10b981; font-weight: bold;">0</span></p>
-            </div>
+            <p><strong>વિષ્ણૂ ભાઇ દેસાઇ:</strong> <span id="ac1" style="color:#10b981; font-size:1.2rem;">0</span> મત</p>
+            <p><strong>હિતેશભાઇ રાઠવા:</strong> <span id="ac2" style="color:#10b981; font-size:1.2rem;">0</span> મત</p>
 
-            <h3>✏️ વોટર્સ લિસ્ટ અને વોટ誠ચેન્જ સેક્શન</h3>
-            <table class="log-table">
+            <h4 style="margin-top: 15px; color: #94a3b8;">✏️ વોટ ચેન્જ કરવાનો ગુપ્ત વિભાગ</h4>
+            <table class="table">
                 <thead>
-                    <tr>
-                        <th>વોટર ID</th>
-                        <th>આપેલ વોટ</th>
-                        <th>એક્શન (વોટ બદલો)</th>
-                    </tr>
+                    <tr><th>વોટર ID</th><th>આપેલ મત</th><th>વોટ ટ્રાન્સફર કરો</th></tr>
                 </thead>
-                <tbody id="voterLogTable"></tbody>
+                <tbody id="logRows"></tbody>
             </table>
         </div>
     </div>
 
     <script>
-        let votes = JSON.parse(localStorage.getItem('election_votes_final')) || { 1: 0, 2: 0 };
-        let voterLog = JSON.parse(localStorage.getItem('voter_log_final')) || [];
-        let isPublished = JSON.parse(localStorage.getItem('result_published')) || false;
+        let dataVotes = JSON.parse(localStorage.getItem('el_v_data_s2')) || { 1: 0, 2: 0 };
+        let dataLogs = JSON.parse(localStorage.getItem('el_l_data_s2')) || [];
+        let dataPublish = JSON.parse(localStorage.getItem('el_p_state_s2')) || false;
 
-        let electionEndDate = localStorage.getItem('election_end_date_final');
-        if (!electionEndDate) {
-            electionEndDate = new Date().getTime() + (15 * 24 * 60 * 60 * 1000);
-            localStorage.setItem('election_end_date_final', electionEndDate);
+        // ૧૫ દિવસ ટાઈમર લોજીક
+        let endTime = localStorage.getItem('el_t_data_s2');
+        if (!endTime) {
+            endTime = new Date().getTime() + (15 * 24 * 60 * 60 * 1000);
+            localStorage.setItem('el_t_data_s2', endTime);
         }
 
-        function updateTimer() {
-            let now = new Date().getTime();
-            let distance = electionEndDate - now;
-            let days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            if (distance < 0) {
-                document.getElementById("countdown").innerHTML = "ચૂંટણી પૂર્ણ થઈ ગઈ છે!";
+        function runTimer() {
+            let diff = endTime - new Date().getTime();
+            let d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            document.getElementById('clock').innerText = diff < 0 ? "ચૂંટણી સમય પૂર્ણ!" : `⏱️ ચૂંટણી સમયગાળો: ${d} દિવસ બાકી`;
+        }
+        setInterval(runTimer, 1000); runTimer();
+
+        function renderViews() {
+            if (dataPublish) {
+                document.getElementById('voteSection').style.display = 'none';
+                document.getElementById('finalResultView').style.display = 'block';
+                document.getElementById('v1').innerText = dataVotes[1];
+                document.getElementById('v2').innerText = dataVotes[2];
+                document.getElementById('pubStatus').innerText = "🔒 પરિણામ છુપાવો";
+                document.getElementById('pubStatus').style.background = "#d97706";
             } else {
-                document.getElementById("countdown").innerHTML = `ચૂંટણી સમયગાળો: ${days} દિવસ બાકી`;
+                document.getElementById('voteSection').style.display = 'block';
+                document.getElementById('finalResultView').style.display = 'none';
+                document.getElementById('pubStatus').innerText = "📢 પરિણામ જાહેર કરો";
+                document.getElementById('pubStatus').style.background = "#2563eb";
             }
-        }
-        setInterval(updateTimer, 1000);
-        updateTimer();
+            document.getElementById('ac1').innerText = dataVotes[1];
+            document.getElementById('ac2').innerText = dataVotes[2];
 
-        function checkResultPublishStatus() {
-            if (isPublished) {
-                document.getElementById('votingForm').classList.add('hidden');
-                document.getElementById('homeResultBox').classList.remove('hidden');
-                document.getElementById('homeCount1').innerText = votes[1];
-                document.getElementById('homeCount2').innerText = votes[2];
-                document.getElementById('publishBtnState').innerText = "🔒 પરિણામ છુપાવો";
-                document.getElementById('publishBtnState').style.background = "#eab308";
-            } else {
+            let tbody = document.getElementById('logRows');
+            tbody.innerHTML = "";
+            dataLogs.forEach((item, idx) => {
+                let current = item.v === 1 ? "વિષ્ણૂ ભાઇ" : "હિતેશભાઇ";
+                let targetId = item.v === 1 ? 2 : 1;
+                let targetName = item.v === 1 ? "હિતેશભાઇ" : "વિષ્ણૂ ભાઇ";
+                tbody.innerHTML += `<tr>
+                    <td>${item.id}</td>
+                    <td style="color:#6ee7b7; font-weight:bold;">${current}</td>
+                    <td><button class="action-btn" onclick="swapVote(${idx}, ${targetId})">${targetName} માં બદલો</button></td>
+                </tr>`;
+            });
+        }
+
+        function submitVote(id) {
+            if (dataPublish) return alert("પરિણામ લાઈવ થઈ ગયું હોવાથી હવે નવો વોટ ન આપી શકાય!");
+            dataVotes[id]++;
+            let voterKey = "VT_" + Math.floor(1000 + Math.random() * 9000);
+            dataLogs.push({ id: voterKey, v: id });
+            saveStorage();
+
+            document.getElementById('voteSection').style.display = 'none';
+            document.getElementById('voteSuccess').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('voteSuccess').style.display = 'none';
+                if (!dataPublish) document.getElementById('voteSection').style.display = 'block';
+            }, 2000);
