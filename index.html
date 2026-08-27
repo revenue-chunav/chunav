@@ -193,7 +193,7 @@
     </div>
 
     <script>
-        // ડેટા લોકલ સેવ રાખવા માટેની સ્વતંત્ર વ્યવસ્થા
+        // ડેટા લોકલ સેવ રાખવા માટેની વ્યવસ્થા
         let votes = JSON.parse(localStorage.getItem('election_votes_final')) || { 1: 0, 2: 0 };
         let voterLog = JSON.parse(localStorage.getItem('voter_log_final')) || [];
 
@@ -294,3 +294,6 @@
             localStorage.setItem('election_votes_final', JSON.stringify(votes));
             localStorage.setItem('voter_log_final', JSON.stringify(voterLog));
         }
+    </script>
+</body>
+</html>
