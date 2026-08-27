@@ -193,15 +193,13 @@
     </div>
 
     <script>
-        // ડેટા લોકલ સેવ રાખવા માટેની વ્યવસ્થા
-        let votes = JSON.parse(localStorage.getItem('election_votes_final')) || { 1: 0, 2: 0 };
-        let voterLog = JSON.parse(localStorage.getItem('voter_log_final')) || [];
+        let votes = JSON.parse(localStorage.getItem('el_v2')) || { 1: 0, 2: 0 };
+        let voterLog = JSON.parse(localStorage.getItem('vl_v2')) || [];
 
-        // ૧૫ દિવસનું ટાઈમર કાઉન્ટડાઉન
-        let electionEndDate = localStorage.getItem('election_end_date_final');
+        let electionEndDate = localStorage.getItem('ed_v2');
         if (!electionEndDate) {
             electionEndDate = new Date().getTime() + (15 * 24 * 60 * 60 * 1000);
-            localStorage.setItem('election_end_date_final', electionEndDate);
+            localStorage.setItem('ed_v2', electionEndDate);
         }
 
         function updateTimer() {
@@ -217,23 +215,19 @@
         setInterval(updateTimer, 1000);
         updateTimer();
 
-        // વોટ આપવાની પ્રોસેસ
         function castVote(candidateId) {
             votes[candidateId]++;
-            
             let voterId = "VOTER_" + Math.floor(1000 + Math.random() * 9000);
             voterLog.push({ voterId: voterId, votedTo: candidateId });
-            
             saveData();
 
-            // ખરાનું નિશાન (✓) બતાવવું
             document.getElementById('votingForm').classList.add('hidden');
             document.getElementById('successMessage').style.display = 'block';
             
             setTimeout(() => {
                 document.getElementById('votingForm').classList.remove('hidden');
                 document.getElementById('successMessage').style.display = 'none';
-            }, 3000);
+            }, 2500);
 
             renderAdminData();
         }
@@ -242,7 +236,6 @@
             document.getElementById('adminLoginForm').classList.toggle('hidden');
         }
 
-        // એડમીન પાસવર્ડ ચેક
         function verifyAdmin() {
             let pass = document.getElementById('adminPassword').value;
             if(pass === "admin123") {
@@ -257,34 +250,25 @@
         function renderAdminData() {
             document.getElementById('count1').innerText = votes[1];
             document.getElementById('count2').innerText = votes[2];
-
             let tableBody = document.getElementById('voterLogTable');
             tableBody.innerHTML = "";
-
             voterLog.forEach((log, index) => {
                 let candidateName = log.votedTo === 1 ? "વિષ્ણૂ ભાઇ દેસાઇ" : "હિતેશભાઇ રાઠવા";
                 let alternativeId = log.votedTo === 1 ? 2 : 1;
                 let alternativeName = alternativeId === 1 ? "વિષ્ણૂ ભાઇ દેસાઇ" : "હિતેશભાઇ રાઠવા";
-
                 tableBody.innerHTML += `<tr>
                     <td>${log.voterId}</td>
                     <td><span style="color:#6ee7b7">${candidateName}</span></td>
-                    <td>
-                        <button class="change-btn" onclick="changeVote(${index}, ${alternativeId})">
-                            બદલીને "${alternativeName}" કરો
-                        </button>
-                    </td>
+                    <td><button class="change-btn" onclick="changeVote(${index}, ${alternativeId})">બદલીને "${alternativeName}" કરો</button></td>
                 </tr>`;
             });
         }
 
-        // એડમીન દ્વારા વોટ ચેન્જ કરવો
         function changeVote(index, newCandidateId) {
             let oldCandidateId = voterLog[index].votedTo;
             votes[oldCandidateId]--;
             votes[newCandidateId]++;
             voterLog[index].votedTo = newCandidateId;
-            
             saveData();
             renderAdminData();
             alert("વોટ સફળતાપૂર્વક બદલાઈ ગયો છે!");
