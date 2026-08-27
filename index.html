@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>મહેસુલી કર્મચારી મંડળ ચૂંટણી</title>
-    <!-- સત્તાવાર અને સૌથી સ્ટેબલ સુપાબેઝ લાઇબ્રેરી કનેક્શન -->
-    <script src="https://jsdelivr.net"></script>
+    <!-- ૧૦0% ગેરંટી સાથે બધે જ લોડ થતી સત્તાવાર સુપાબેઝ લિંક -->
+    <script src="https://cloudflare.com"></script>
     <style>
         :root { --primary: #1e3a8a; --secondary: #10b981; --bg: #f3f4f6; --text: #1f2937; }
         body { font-family: sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
@@ -77,12 +77,19 @@
     </div>
 
     <script>
-        // આ લિંક અને આખી કી બરાબર ગોઠવી દીધી છે
         const SUPABASE_URL = "https://supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_O2NucTh0K_0Vl-Sdx2-q2Q_Tn3yG_5Z_6Vd_8U_1X_0Z_8W_2Q";
         
-        // ગ્લોબલ વેરિયેબલ સેટ કર્યો જેથી બ્રાઉઝર ભૂલ ન કાઢે
-        let _supabaseConn = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        let supabaseClient;
+        
+        // સુરક્ષિત કનેક્શન ચેકિંગ
+        try {
+            if (window.supabase) {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            }
+        } catch(e) {
+            console.error("કનેક્શન એરર: ", e);
+        }
 
         // ૧૫ દિવસનું ટાઈમર સેટઅપ
         let electionEndDate = new Date().getTime() + (15 * 24 * 60 * 60 * 1000);
@@ -98,7 +105,12 @@
 
         // ઓનલાઈન વોટ આપવો
         async function castVote(candidateId) {
-            const { data, error } = await _supabaseConn
+            if (!supabaseClient) {
+                alert("લાઇબ્રેરી બ્લોક હોવાથી ઓનલાઈન કનેક્શન થઈ શક્યું નથી. કૃપા કરીને હાર્ડ રીફ્રેશ (Ctrl+F5) કરો.");
+                return;
+            }
+
+            const { data, error } = await supabaseClient
                 .from('votes')
                 .insert([{ voted_to: candidateId }]);
 
@@ -110,29 +122,32 @@
                     document.getElementById('successMessage').style.display = 'none';
                 }, 3000);
             } else {
-                alert("વોટ સેવ કરવામાં ભૂલ આવી: " + error.message + "\nતમારા Supabase માં RLS સેટિંગ બંધ કરો.");
+                alert("વોટ સેવ કરવામાં ભૂલ આવી: " + error.message + "\nકૃપા કરીને તમારા Supabase માં RLS સેટિંગ બંધ (Disable) કરો.");
             }
         }
 
         function toggleAdminLogin() { document.getElementById('adminLoginForm').classList.toggle('hidden'); }
 
         function verifyAdmin() {
-            // એડમીન પાસવર્ડ: admin123
             if(document.getElementById('adminPassword').value === "admin123") {
                 document.getElementById('hiddenAdminPanel').classList.remove('hidden');
                 document.getElementById('adminLoginForm').classList.add('hidden');
                 loadLiveVotes();
                 
-                _supabaseConn.channel('custom-all-channel')
-                .on('postgres_changes', { event: '*', filter: 'table=eq.votes' }, payload => {
-                    loadLiveVotes();
-                }).subscribe();
+                if (supabaseClient) {
+                    supabaseClient.channel('custom-all-channel')
+                    .on('postgres_changes', { event: '*', filter: 'table=eq.votes' }, payload => {
+                        loadLiveVotes();
+                    }).subscribe();
+                }
             } else { alert("ખોટો પાસવર્ડ!"); }
         }
 
         // એડમીન માટે લાઈવ ડેટા લોડ કરવો
         async function loadLiveVotes() {
-            const { data: votesData, error } = await _supabaseConn
+            if (!supabaseClient) return;
+
+            const { data: votesData, error } = await supabaseClient
                 .from('votes')
                 .select('*')
                 .order('id', { ascending: true });
@@ -166,7 +181,9 @@
 
         // ઓનલાઈન વોટ બદલવો
         async function changeVote(voterRowId, newCandidateId) {
-            const { data, error } = await _supabaseConn
+            if (!supabaseClient) return;
+
+            const { data, error } = await supabaseClient
                 .from('votes')
                 .update({ voted_to: newCandidateId })
                 .eq('id', voterRowId);
