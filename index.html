@@ -48,7 +48,7 @@
 
         <div id="successMessage" class="success-box"><div>✓</div>તમારો મત સફળતાપૂર્વક પેટીમાં નોંધાઈ ગયો છે!</div>
 
-        <!-- 📢 પરિણામ જાહેર બોક્સ -->
+        <!-- પરિણામ જાહેર બોક્સ -->
         <div id="homeResultBox" class="result-box">
             <h3 style="color:#166534; text-align:center; margin-top:0;">📢 ચૂંટણીનું અંતિમ પરિણામ</h3>
             <div id="finalResultsContainer"></div>
@@ -72,7 +72,7 @@
                 </div>
             </div>
 
-            <!-- 📄 ફાઈલ અપલોડ સેક્શન -->
+            <!-- ફાઈલ અપલોડ સેક્શન -->
             <div style="background:#1e293b; padding:12px; border-radius:8px; margin-top:15px;">
                 <h4 style="margin-top:0; color:#cbd5e1;">📋 કર્મચારીઓની આઈડી સાથેની યાદી અપલોડ કરો (.txt ફાઇલ)</h4>
                 <input type="file" id="pdfUpload" class="file-input" accept=".txt" onchange="handleFileUpload(event)">
@@ -130,7 +130,7 @@
                 localStorage.setItem('voter_db_v4', JSON.stringify(voterDb));
                 localStorage.setItem('used_ids_v4', JSON.stringify(usedIds));
                 saveData(); checkResultPublishStatus();
-                alert("સફળતાપૂર્વક " + Object.keys(voterDb).length + " આઈડી લોડ થયા!");
+                alert("સફળતાપૂર્વક " + Object.keys(voterDb).length + " કર્મચારી આઈડી લોડ થયા!");
             };
             reader.readAsText(file);
         }
@@ -155,4 +155,3 @@
             } else {
                 if(currentVerifiedId) {
                     document.getElementById('voterAuthForm').style.display = 'none';
-                    document.getElementById('votingForm').style.display = 'block';
