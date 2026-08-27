@@ -54,9 +54,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background: #fff;
         }
 
-        .candidate-name { font-size: 1.2rem; font-weight: bold; }
+        .candidate-name { font-size: 1.3rem; font-weight: bold; color: #111827; }
 
         .vote-btn {
             background: var(--primary);
@@ -79,6 +80,18 @@
             margin-top: 20px;
         }
         .checkmark { font-size: 3rem; color: var(--secondary); }
+
+        /* 📊 હોમ પેજ રીઝલ્ટ સેક્શન */
+        .result-box {
+            background: #f0fdf4;
+            border: 2px solid #bbf7d0;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        .result-box h2 { color: #166534; text-align: center; margin-top: 0; }
+        .result-item { font-size: 1.2rem; margin: 10px 0; font-weight: bold; color: #1f2937; }
 
         .admin-section {
             margin-top: 30px;
@@ -134,7 +147,6 @@
             cursor: pointer;
         }
 
-        /* 🔴 રીસેટ બટનની ખાસ ડિઝાઇન */
         .reset-btn {
             background: #dc2626;
             color: white;
@@ -145,6 +157,18 @@
             font-weight: bold;
         }
         .reset-btn:hover { background: #b91c1c; }
+
+        .publish-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .publish-btn:hover { background: #1d4ed8; }
     </style>
 </head>
 <body>
@@ -155,14 +179,15 @@
         
         <div class="timer" id="countdown">ચૂંટણીનો સમયગાળો ચાલુ છે...</div>
 
+        <!-- મતદાન ફોર્મ (પરિણામ જાહેર થાય ત્યારે આ ગાયબ થઈ જશે) -->
         <div id="votingForm">
             <div class="candidate-card">
-                <span class="candidate-name">વિષ્ણૂ ભાઇ દેસાઇ</span>
+                <span class="candidate-name">૧. વિષ્ણૂ ભાઇ દેસાઇ</span>
                 <button class="vote-btn" onclick="castVote(1)">વોટ આપો</button>
             </div>
 
             <div class="candidate-card">
-                <span class="candidate-name">હિતેશભાઇ રાઠવા</span>
+                <span class="candidate-name">૨. હિતેશભાઇ રાઠવા</span>
                 <button class="vote-btn" onclick="castVote(2)">વોટ આપો</button>
             </div>
         </div>
@@ -170,6 +195,17 @@
         <div id="successMessage" class="success-box">
             <div class="checkmark">✓</div>
             તમારો વોટ સફળતાપૂર્વક નોંધાઈ ગયો છે!
+        </div>
+
+        <!-- 📢 હોમ પેજ પરિણામ બોક્સ (શરૂઆતમાં છુપાયેલું રહેશે) -->
+        <div id="homeResultBox" class="result-box hidden">
+            <h2>📢 ચૂંટણીનું અંતિમ પરિણામ</h2>
+            <div class="result-item" style="border-left: 5px solid #2563eb; padding-left: 10px;">
+                ૧. વિષ્ણૂ ભાઇ દેસાઇ: <span id="homeCount1" style="color: #2563eb; font-size: 1.4rem;">0</span> મત
+            </div>
+            <div class="result-item" style="border-left: 5px solid #d97706; padding-left: 10px;">
+                ૨. હિતેશભાઇ રાઠવા: <span id="homeCount2" style="color: #d97706; font-size: 1.4rem;">0</span> મત
+            </div>
         </div>
     </div>
 
@@ -183,15 +219,18 @@
         </div>
 
         <div id="hiddenAdminPanel" class="admin-panel hidden">
-            <!-- ઉપર હેડરમાં રીસેટ બટન ગોઠવેલું છે -->
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #475569; padding-bottom: 10px; margin-bottom: 15px;">
                 <h2 style="margin: 0;">📊 એડમીન લાઇવ ડેશબોર્ડ</h2>
-                <button class="reset-btn" onclick="resetElectionData()">🔄 ચૂંટણી રીસેટ કરો</button>
+                <div>
+                    <!-- 📢 પરિણામ લાઈવ કરવાનું નવું બટન -->
+                    <button id="publishBtnState" class="publish-btn" onclick="togglePublishResult()">📢 પરિણામ જાહેર કરો</button>
+                    <button class="reset-btn" onclick="resetElectionData()">🔄 ચૂંટણી રીસેટ કરો</button>
+                </div>
             </div>
             
             <div style="background: #334155; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
-                <p><strong>વિષ્ણૂ ભાઇ દેસાઇ:</strong> <span id="count1" style="font-size: 1.5rem; color: #10b981;">0</span> વોટ</p>
-                <p><strong>હિતેશભાઇ રાઠવા:</strong> <span id="count2" style="font-size: 1.5rem; color: #10b981;">0</span> વોટ</p>
+                <p style="font-size: 1.1rem;"><strong>૧. વિષ્ણૂ ભાઇ દેસાઇ:</strong> કુલ મળેલ મત: <span id="count1" style="font-size: 1.5rem; color: #10b981; font-weight: bold;">0</span></p>
+                <p style="font-size: 1.1rem;"><strong>૨. હિતેશભાઇ રાઠવા:</strong> કુલ મળેલ મત: <span id="count2" style="font-size: 1.5rem; color: #10b981; font-weight: bold;">0</span></p>
             </div>
 
             <h3>✏️ વોટર્સ લિસ્ટ અને વોટ ચેન્જ સેક્શન</h3>
@@ -211,6 +250,7 @@
     <script>
         let votes = JSON.parse(localStorage.getItem('election_votes_final')) || { 1: 0, 2: 0 };
         let voterLog = JSON.parse(localStorage.getItem('voter_log_final')) || [];
+        let isPublished = JSON.parse(localStorage.getItem('result_published')) || false;
 
         let electionEndDate = localStorage.getItem('election_end_date_final');
         if (!electionEndDate) {
@@ -231,59 +271,12 @@
         setInterval(updateTimer, 1000);
         updateTimer();
 
-        function castVote(candidateId) {
-            votes[candidateId]++;
-            let voterId = "VOTER_" + Math.floor(1000 + Math.random() * 9000);
-            voterLog.push({ voterId: voterId, votedTo: candidateId });
-            saveData();
-
-            document.getElementById('votingForm').classList.add('hidden');
-            document.getElementById('successMessage').style.display = 'block';
-            
-            setTimeout(() => {
-                document.getElementById('votingForm').classList.remove('hidden');
-                document.getElementById('successMessage').style.display = 'none';
-            }, 2500);
-
-            renderAdminData();
-        }
-
-        function toggleAdminLogin() {
-            document.getElementById('adminLoginForm').classList.toggle('hidden');
-        }
-
-        function verifyAdmin() {
-            let pass = document.getElementById('adminPassword').value;
-            if(pass === "admin123") {
-                document.getElementById('hiddenAdminPanel').classList.remove('hidden');
-                document.getElementById('adminLoginForm').classList.add('hidden');
-                renderAdminData();
-            } else {
-                alert("ખોટો પાસવર્ડ!");
-            }
-        }
-
-        function renderAdminData() {
-            document.getElementById('count1').innerText = votes[1];
-            document.getElementById('count2').innerText = votes[2];
-            let tableBody = document.getElementById('voterLogTable');
-            tableBody.innerHTML = "";
-            voterLog.forEach((log, index) => {
-                let candidateName = log.votedTo === 1 ? "વિષ્ણૂ ભાઇ દેસાઇ" : "હિતેશભાઇ રાઠવા";
-                let alternativeId = log.votedTo === 1 ? 2 : 1;
-                let alternativeName = alternativeId === 1 ? "વિષ્ણૂ ભાઇ દેસાઇ" : "હિતેશભાઇ રાઠવા";
-                tableBody.innerHTML += `<tr>
-                    <td>${log.voterId}</td>
-                    <td><span style="color:#6ee7b7">${candidateName}</span></td>
-                    <td><button class="change-btn" onclick="changeVote(${index}, ${alternativeId})">બદલીને "${alternativeName}" કરો</button></td>
-                </tr>`;
-            });
-        }
-
-        function changeVote(index, newCandidateId) {
-            let oldCandidateId = voterLog[index].votedTo;
-            votes[oldCandidateId]--;
-            votes[newCandidateId]++;
-            voterLog[index].votedTo = newCandidateId;
-            saveData();
-            renderAdminData();
+        // હોમ પેજ પર પબ્લિશ સ્ટેટસ ચેક કરવું
+        function checkResultPublishStatus() {
+            if (isPublished) {
+                document.getElementById('votingForm').classList.add('hidden');
+                document.getElementById('homeResultBox').classList.remove('hidden');
+                document.getElementById('homeCount1').innerText = votes[1];
+                document.getElementById('homeCount2').innerText = votes[2];
+                document.getElementById('publishBtnState').innerText = "🔒 પરિણામ છુપાવો";
+                document.getElementById('publishBtnState').style.background = "#eab308";
