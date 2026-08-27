@@ -56,7 +56,7 @@
         </div>
     </div>
 
-    <!-- એડમીન વિભાગ પૅનલ -->
+    <!-- એડમીન વિભાગ -->
     <div class="admin-section">
         <button style="background:none; border:none; color:#64748b; cursor:pointer; text-decoration:underline;" onclick="toggleAdminForm()">🔐 ગુપ્ત એડમીન વિભાગ</button>
         <div id="adminLoginForm" style="display:none; margin-top:10px;">
@@ -147,6 +147,8 @@
                 document.getElementById('votingForm').style.display = 'none';
                 document.getElementById('homeResultBox').style.display = 'block';
                 let finalContainer = document.getElementById('finalResultsContainer'); finalContainer.innerHTML = "";
-                candidates.forEach(name => { finalContainer.innerHTML += `<p style="font-weight:bold; font-size:1.1rem;">• ${name}: <span style="color:#2563eb;">${votes[name] || 0}</span> મત</p>`; });
+                candidates.forEach(name => { finalContainer.innerHTML += `<p>• ${name}: ${votes[name] || 0} મત</p>`; });
                 document.getElementById('publishBtnState').innerText = "🔒 પરિણામ છુપાવો";
-                document.getElementById('publishBtnState').style.background = "#eab308";
+                document.getElementById('publishBtnState').style.background = "#d97706";
+            } else {
+                if(currentVerifiedId) {
