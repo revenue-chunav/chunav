@@ -77,11 +77,11 @@
     </div>
 
     <script>
-        // તમારી આપેલી સાચી લિંક અને આખી કી અહીં સેટ કરી દીધી છે
-        const SUPABASE_URL = "https://mlsywufcwagyietimvjn.supabase.co";
+        const SUPABASE_URL = "https://supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_O2NucTh0K_0Vl-Sdx2-q2Q_Tn3yG_5Z_6Vd_8U_1X_0Z_8W_2Q";
         
-        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // અહીં કનેક્શન વેરિયેબલનું નામ બરાબર 'supabaseClient' સેટ કર્યું છે
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // ૧૫ દિવસનું ટાઈમર સેટઅપ
         let electionEndDate = new Date().getTime() + (15 * 24 * 60 * 60 * 1000);
@@ -96,7 +96,7 @@
 
         // ઓનલાઈન વોટ આપવો
         async function castVote(candidateId) {
-            const { data, error } = await _supabase
+            const { data, error } = await supabaseClient
                 .from('votes')
                 .insert([{ voted_to: candidateId }]);
 
@@ -108,21 +108,19 @@
                     document.getElementById('successMessage').style.display = 'none';
                 }, 3000);
             } else {
-                alert("વોટ સેવ કરવામાં ભૂલ આવી: " + error.message + "\nકૃપા કરીને Supabase માં RLS બંધ કરો.");
+                alert("વોટ સેવ કરવામાં ભૂલ આવી: " + error.message + "\nકૃપા કરીને Supabase માં RLS બંધ ચેક કરો.");
             }
         }
 
         function toggleAdminLogin() { document.getElementById('adminLoginForm').classList.toggle('hidden'); }
 
         function verifyAdmin() {
-            // એડમીન પાસવર્ડ: admin123
             if(document.getElementById('adminPassword').value === "admin123") {
                 document.getElementById('hiddenAdminPanel').classList.remove('hidden');
                 document.getElementById('adminLoginForm').classList.add('hidden');
                 loadLiveVotes();
                 
-                // રીયલ-ટાઇમ અપડેટ્સ માટે કનેક્શન
-                _supabase.channel('custom-all-channel')
+                supabaseClient.channel('custom-all-channel')
                 .on('postgres_changes', { event: '*', filter: 'table=eq.votes' }, payload => {
                     loadLiveVotes();
                 }).subscribe();
@@ -131,7 +129,7 @@
 
         // એડમીન માટે લાઈવ ડેટા લોડ કરવો
         async function loadLiveVotes() {
-            const { data: votesData, error } = await _supabase
+            const { data: votesData, error } = await supabaseClient
                 .from('votes')
                 .select('*')
                 .order('id', { ascending: true });
@@ -165,7 +163,7 @@
 
         // ઓનલાઈન વોટ બદલવો
         async function changeVote(voterRowId, newCandidateId) {
-            const { data, error } = await _supabase
+            const { data, error } = await supabaseClient
                 .from('votes')
                 .update({ voted_to: newCandidateId })
                 .eq('id', voterRowId);
