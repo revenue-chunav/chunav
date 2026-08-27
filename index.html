@@ -179,7 +179,7 @@
         
         <div class="timer" id="countdown">ચૂંટણીનો સમયગાળો ચાલુ છે...</div>
 
-        <!-- મતદાન ફોર્મ (પરિણામ જાહેર થાય ત્યારે આ ગાયબ થઈ જશે) -->
+        <!-- મતદાન ફોર્મ -->
         <div id="votingForm">
             <div class="candidate-card">
                 <span class="candidate-name">૧. વિષ્ણૂ ભાઇ દેસાઇ</span>
@@ -222,7 +222,7 @@
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #475569; padding-bottom: 10px; margin-bottom: 15px;">
                 <h2 style="margin: 0;">📊 એડમીન લાઇવ ડેશબોર્ડ</h2>
                 <div>
-                    <!-- 📢 પરિણામ લાઈવ કરવાનું નવું બટન -->
+                    <!-- 📢 પરિણામ જાહેર કરવાનું બટન -->
                     <button id="publishBtnState" class="publish-btn" onclick="togglePublishResult()">📢 પરિણામ જાહેર કરો</button>
                     <button class="reset-btn" onclick="resetElectionData()">🔄 ચૂંટણી રીસેટ કરો</button>
                 </div>
@@ -271,7 +271,6 @@
         setInterval(updateTimer, 1000);
         updateTimer();
 
-        // હોમ પેજ પર પબ્લિશ સ્ટેટસ ચેક કરવું
         function checkResultPublishStatus() {
             if (isPublished) {
                 document.getElementById('votingForm').classList.add('hidden');
@@ -280,3 +279,4 @@
                 document.getElementById('homeCount2').innerText = votes[2];
                 document.getElementById('publishBtnState').innerText = "🔒 પરિણામ છુપાવો";
                 document.getElementById('publishBtnState').style.background = "#eab308";
+            } else {
