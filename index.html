@@ -133,6 +133,18 @@
             border-radius: 4px;
             cursor: pointer;
         }
+
+        /* 🔴 રીસેટ બટનની ખાસ ડિઝાઇન */
+        .reset-btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .reset-btn:hover { background: #b91c1c; }
     </style>
 </head>
 <body>
@@ -171,7 +183,11 @@
         </div>
 
         <div id="hiddenAdminPanel" class="admin-panel hidden">
-            <h2>📊 એડમીન લાઇવ ડેશબોર્ડ (ગુપ્ત પેજ)</h2>
+            <!-- ઉપર હેડરમાં રીસેટ બટન ગોઠવેલું છે -->
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #475569; padding-bottom: 10px; margin-bottom: 15px;">
+                <h2 style="margin: 0;">📊 એડમીન લાઇવ ડેશબોર્ડ</h2>
+                <button class="reset-btn" onclick="resetElectionData()">🔄 ચૂંટણી રીસેટ કરો</button>
+            </div>
             
             <div style="background: #334155; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
                 <p><strong>વિષ્ણૂ ભાઇ દેસાઇ:</strong> <span id="count1" style="font-size: 1.5rem; color: #10b981;">0</span> વોટ</p>
@@ -193,13 +209,13 @@
     </div>
 
     <script>
-        let votes = JSON.parse(localStorage.getItem('el_v2')) || { 1: 0, 2: 0 };
-        let voterLog = JSON.parse(localStorage.getItem('vl_v2')) || [];
+        let votes = JSON.parse(localStorage.getItem('election_votes_final')) || { 1: 0, 2: 0 };
+        let voterLog = JSON.parse(localStorage.getItem('voter_log_final')) || [];
 
-        let electionEndDate = localStorage.getItem('ed_v2');
+        let electionEndDate = localStorage.getItem('election_end_date_final');
         if (!electionEndDate) {
             electionEndDate = new Date().getTime() + (15 * 24 * 60 * 60 * 1000);
-            localStorage.setItem('ed_v2', electionEndDate);
+            localStorage.setItem('election_end_date_final', electionEndDate);
         }
 
         function updateTimer() {
@@ -271,13 +287,3 @@
             voterLog[index].votedTo = newCandidateId;
             saveData();
             renderAdminData();
-            alert("વોટ સફળતાપૂર્વક બદલાઈ ગયો છે!");
-        }
-
-        function saveData() {
-            localStorage.setItem('election_votes_final', JSON.stringify(votes));
-            localStorage.setItem('voter_log_final', JSON.stringify(voterLog));
-        }
-    </script>
-</body>
-</html>
