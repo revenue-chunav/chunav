@@ -11,7 +11,6 @@
         .card { border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px; margin: 12px 0; display: flex; justify-content: space-between; align-items: center; background: #fff; }
         .name { font-size: 1.1rem; font-weight: bold; text-align: left; }
         .vote-btn { background: #1e3a8a; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        .vote-btn:hover { background: #0f172a; }
         .success-box { display: none; color: #10b981; font-size: 1.3rem; font-weight: bold; margin-top: 15px; }
         .result-box { background: #f0fdf4; border: 2px solid #bbf7d0; padding: 15px; border-radius: 12px; margin-top: 15px; text-align: left; display: none; }
         .admin-section { margin-top: 30px; border-top: 1px dashed #cbd5e1; padding-top: 15px; }
@@ -28,9 +27,9 @@
 
     <div class="container">
         <h1>મહેસુલી કર્મચારી મંડળ ચૂંટણી</h1>
-        <div style="background:#fef2f2; color:#991b1b; padding:6px 15px; border-radius:20px; font-weight:bold; margin-bottom:15px; display:inline-block;" id="countdown">૧ મહિનો બાકી</div>
+        <div style="background:#fef2f2; color:#991b1b; padding:6px 15px; border-radius:20px; font-weight:bold; margin-bottom:15px; display:inline-block;" id="countdown">૩૦ દિવસ બાકી</div>
 
-        <!-- 🛡️ આઈડી વેરિફિકેશન സെક્શન -->
+        <!-- 🛡️ આઈડી વેરિફિકેશન સેક્શન -->
         <div id="voterAuthForm" class="voter-verify-box">
             <h4 style="margin-top:0; color:#1e3a8a;">🛡️ વોટર આઈડી ચકાસણી (ચીટિંગ પ્રોટેક્શન)</h4>
             <label style="font-weight:bold; font-size:0.9rem;">તમારો કર્મચારી ID (Employee ID) લખો:</label>
@@ -102,63 +101,36 @@
         let isPublished = JSON.parse(localStorage.getItem('p_f_v4')) || false;
         let currentVerifiedId = "";
 
-        let electionEndDate = localStorage.getItem('t_f_v4');
-        if (!electionEndDate) {
-            electionEndDate = new Date().getTime() + (30 * 24 * 60 * 60 * 1000); // ૩૦ દિવસ
-            localStorage.setItem('t_f_v4', electionEndDate);
-        }
+        let electionEndDate = localStorage.getItem('t_f_v4') || new Date().getTime() + (30 * 24 * 60 * 60 * 1000);
+        localStorage.setItem('t_f_v4', electionEndDate);
 
         function updateTimer() {
             let diff = electionEndDate - new Date().getTime();
             let d = Math.floor(diff / (1000 * 60 * 60 * 24));
-            let h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            document.getElementById('countdown').innerText = diff < 0 ? "સમય પૂર્ણ!" : `⏱️ ચૂંટણી સમયગાળો: ${d} દિવસ, ${h} કલાક બાકી`;
+            document.getElementById('countdown').innerText = diff < 0 ? "સમય પૂર્ણ!" : `⏱️ ચૂંટણી સમયગાળો: ${d} દિવસ બાકી`;
         }
         setInterval(updateTimer, 1000); updateTimer();
 
         function handleFileUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = function(e) {
-                const text = e.target.result;
-                const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
-                
-                let newCandidates = [];
-                let newVoterDb = {};
-                let newVotes = {};
-
+                const lines = e.target.result.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                candidates = []; voterDb = {}; votes = {}; voterLog = []; usedIds = {};
                 lines.forEach(line => {
                     const parts = line.split(',');
                     if(parts.length >= 2) {
-                        const name = parts[0].trim();
-                        const empId = parts[1].trim();
-                        if(!newCandidates.includes(name)) {
-                            newCandidates.push(name);
-                            newVotes[name] = 0;
-                        }
-                        newVoterDb[empId] = name;
+                        const name = parts[0].trim(), empId = parts[1].trim();
+                        if(!candidates.includes(name)) { candidates.push(name); votes[name] = 0; }
+                        voterDb[empId] = name;
                     }
                 });
-
-                if (newCandidates.length === 0) {
-                    alert("ફાઈલ ફોર્મેટ ખોટું છે! કૃપા કરીને 'નામ, ID' મુજબ ફાઈલ બનાવો.");
-                    return;
-                }
-
-                candidates = newCandidates;
-                voterDb = newVoterDb;
-                votes = newVotes;
-                voterLog = [];
-                usedIds = {};
-
                 localStorage.setItem('cand_list_v4', JSON.stringify(candidates));
                 localStorage.setItem('voter_db_v4', JSON.stringify(voterDb));
                 localStorage.setItem('used_ids_v4', JSON.stringify(usedIds));
-                saveData();
-                checkResultPublishStatus();
-                alert(`સફળતાપૂર્વક ${Object.keys(voterDb).length} કર્મચારીના સિક્યોર આઈડી અપલોડ થઈ ગયા છે!`);
+                saveData(); checkResultPublishStatus();
+                alert("સફળતાપૂર્વક " + Object.keys(voterDb).length + " આઈડી લોડ થયા!");
             };
             reader.readAsText(file);
         }
@@ -166,16 +138,21 @@
         function verifyVoterIdentity() {
             const inputId = document.getElementById('voterIdInput').value.trim();
             const errorMsg = document.getElementById('authErrorMsg');
+            if(!voterDb[inputId]) { errorMsg.innerText = "❌ આઈડી રજીસ્ટર્ડ નથી!"; errorMsg.style.display = "block"; return; }
+            if(usedIds[inputId]) { errorMsg.innerText = "⚠️ આ આઈડી પરથી વોટ અપાઈ ગયો છે!"; errorMsg.style.display = "block"; return; }
+            errorMsg.style.display = "none"; currentVerifiedId = inputId;
+            checkResultPublishStatus();
+        }
 
-            if(!inputId) {
-                errorMsg.innerText = "કૃપા કરીને આઈડી ખાલી ન મૂકો!";
-                errorMsg.style.display = "block";
-                return;
-            }
-
-            if(!voterDb[inputId]) {
-                errorMsg.innerText = "❌ આ આઈડી રજીસ્ટર્ડ નથી! સાચો ઓફિસ આઈડી લખો.";
-                errorMsg.style.display = "block";
-                return;
-            }
-
+        function checkResultPublishStatus() {
+            if (isPublished) {
+                document.getElementById('voterAuthForm').style.display = 'none';
+                document.getElementById('votingForm').style.display = 'none';
+                document.getElementById('homeResultBox').style.display = 'block';
+                let finalContainer = document.getElementById('finalResultsContainer'); finalContainer.innerHTML = "";
+                candidates.forEach(name => { finalContainer.innerHTML += `<p>• ${name}: ${votes[name] || 0} મત</p>`; });
+                document.getElementById('publishBtnState').innerText = "🔒 પરિણામ છુપાવો";
+            } else {
+                if(currentVerifiedId) {
+                    document.getElementById('voterAuthForm').style.display = 'none';
+                    document.getElementById('votingForm').style.display = 'block';
