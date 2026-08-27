@@ -21,6 +21,7 @@
         .ctrl-btn { border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; color: #fff; }
         .file-input { margin: 10px 0; padding: 10px; background: #1e293b; border: 1px dashed #475569; border-radius: 6px; color: #fff; width: 100%; box-sizing: border-box; }
         .voter-verify-box { background: #f8fafc; border: 1px solid #cbd5e1; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: left; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
@@ -152,6 +153,6 @@
                 let finalContainer = document.getElementById('finalResultsContainer'); finalContainer.innerHTML = "";
                 candidates.forEach(name => { finalContainer.innerHTML += `<p>• ${name}: ${votes[name] || 0} મત</p>`; });
                 document.getElementById('publishBtnState').innerText = "🔒 પરિણામ છુપાવો";
+                document.getElementById('publishBtnState').style.background = "#d97706";
             } else {
                 if(currentVerifiedId) {
-                    document.getElementById('voterAuthForm').style.display = 'none';
