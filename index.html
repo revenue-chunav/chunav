@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>મહેસુલી કર્મચારી મંડળ સુરક્ષિત ચૂંટણી</title>
-    <!-- સત્તાવાર સુપાબેઝ લાઇબ્રેરી કનેક્શન -->
+    <title>મહેસુલી કર્મચારી મંડળ ઓનલાઈન ચૂંટણી</title>
+    <!-- ૫૦૦ કર્મચારીઓ માટે વૈશ્વિક સ્તરે ડેટા કનેક્ટ કરવા માટેની સત્તાવાર સુપાબેઝ લાઇબ્રેરી -->
     <script src="https://unpkg.com"></script>
     <style>
         body { font-family: sans-serif; background-color: #f1f5f9; color: #334155; text-align: center; padding: 20px; }
@@ -13,6 +13,7 @@
         .card { border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px; margin: 12px 0; display: flex; justify-content: space-between; align-items: center; background: #fff; }
         .name { font-size: 1.1rem; font-weight: bold; text-align: left; }
         .vote-btn { background: #1e3a8a; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .vote-btn:hover { background: #0f172a; }
         .success-box { display: none; color: #10b981; font-size: 1.3rem; font-weight: bold; margin-top: 15px; }
         .result-box { background: #f0fdf4; border: 2px solid #bbf7d0; padding: 15px; border-radius: 12px; margin-top: 15px; text-align: left; display: none; }
         .admin-section { margin-top: 30px; border-top: 1px dashed #cbd5e1; padding-top: 15px; }
@@ -32,7 +33,7 @@
         <h1>મહેસુલી કર્મચારી મંડળ ચૂંટણી</h1>
         <div style="background:#fef2f2; color:#991b1b; padding:6px 15px; border-radius:20px; font-weight:bold; margin-bottom:15px; display:inline-block;" id="countdown">૩૦ દિવસ બાકી</div>
 
-        <!-- 🛡️ આઈડી વેરિફિકેશન સેક્શન -->
+        <!-- 🛡️ આઈડી વેરિફિકેશન સેક્શન (ચીટિંગ પ્રોટેક્શન) -->
         <div id="voterAuthForm" class="voter-verify-box">
             <h4 style="margin-top:0; color:#1e3a8a;">🛡️ વોટર આઈડી ચકાસણી (ચીટિંગ પ્રોટેક્શન)</h4>
             <label style="font-weight:bold; font-size:0.9rem;">તમારો કર્મચારી ID (Employee ID) લખો:</label>
@@ -43,22 +44,22 @@
             <p id="authErrorMsg" style="color:#dc2626; font-size:0.9rem; margin:5px 0 0 0; display:none; font-weight:bold;"></p>
         </div>
 
-        <!-- 🗳️ મતદાન ફોર્મ -->
+        <!-- 🗳️ મતદાન ફોર્મ (આઈડી સાચો હોય તો જ ઓપન થશે) -->
         <div id="votingForm" class="hidden">
             <p style="color:#166534; font-weight:bold; margin-bottom:15px; text-align:left;" id="welcomeVoterMsg"></p>
             <div id="candidatesContainer"></div>
         </div>
 
-        <div id="successMessage" class="success-box"><div>✓</div>તમારો મત સફળતાપૂર્વક પેટીમાં નોંધાઈ ગયો છે!</div>
+        <div id="successMessage" class="success-box"><div>✓</div>તમારો મત સફળતાપૂર્વક ઓનલાઈન પેટીમાં નોંધાઈ ગયો છે!</div>
 
-        <!-- પરિણામ જાહેર બોક્સ -->
+        <!-- 📢 હોમ પેજ પરિણામ બોક્સ -->
         <div id="homeResultBox" class="result-box">
             <h3 style="color:#166534; text-align:center; margin-top:0;">📢 ચૂંટણીનું અંતિમ પરિણામ</h3>
             <div id="finalResultsContainer"></div>
         </div>
     </div>
 
-    <!-- 🔐 એડમીન વિભાગ -->
+    <!-- 🔐 ગુપ્ત એડમીન વિભાગ -->
     <div class="admin-section">
         <button style="background:none; border:none; color:#64748b; cursor:pointer; text-decoration:underline;" onclick="toggleAdminForm()">🔐 ગુપ્ત એડમીન વિભાગ</button>
         <div id="adminLoginForm" style="display:none; margin-top:10px;">
@@ -68,32 +69,35 @@
 
         <div id="hiddenAdminPanel" class="admin-panel">
             <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #334155; padding-bottom:10px;">
-                <h3 style="margin:0; color:#f59e0b;">📊 લાઇવ ડેશબોર્ડ</h3>
+                <h3 style="margin:0; color:#f59e0b;">📊 લાઇવ ક્લાઉડ ડેશબોર્ડ</h3>
                 <div>
                     <button id="publishBtnState" class="ctrl-btn" style="background:#2563eb; margin-right:5px;" onclick="togglePublishResult()">📢 પરિણામ જાહેર કરો</button>
                     <button class="ctrl-btn" style="background:#dc2626;" onclick="resetElectionData()">🔄 રીસેટ ઓપ્શન</button>
                 </div>
             </div>
 
-            <!-- ફાઈલ અપલોડ સેક્શન -->
+            <!-- 📄 ૫૦૦ કર્મચારીઓનું લિસ્ટ અપલોડ સેક્શન -->
             <div style="background:#1e293b; padding:12px; border-radius:8px; margin-top:15px;">
                 <h4 style="margin-top:0; color:#cbd5e1;">📋 કર્મચારીઓની આઈડી સાથેની યાદી અપલોડ કરો (.txt ફાઇલ)</h4>
                 <input type="file" id="pdfUpload" class="file-input" accept=".txt" onchange="handleFileUpload(event)">
                 <p style="font-size:0.8rem; color:#94a3b8; margin:0;">*ફોર્મેટ: નામ, કર્મચારીID (દા.ત. વિષ્ણૂ ભાઇ દેસાઇ, EMP101)</p>
             </div>
             
-            <h4 style="margin-top:20px; color:#94a3b8;">📊 લાઇવ મત ગણતરી:</h4>
+            <h4 style="margin-top:20px; color:#94a3b8;">📊 ક્લાઉડ રીયલ-ટાઇમ મત ગણતરી:</h4>
             <div id="adminLiveVotes"></div>
 
-            <h4 style="margin-top: 20px; color: #94a3b8;">✏️ વોટ ચેન્જ કરવાનો ગુપ્ત વિભાગ</h4>
+            <h4 style="margin-top: 20px; color: #94a3b8;">✏️ વોટ ચેન્જ કરવાનો ગુપ્ત વિભાગ (ક્લાઉડ લોગ)</h4>
             <table class="log-table">
-                <thead><tr><th>વોટર ID</th><th>આપેલ મત</th><th>એક્શન</th></tr></thead>
+                <thead>
+                    <tr><th>કર્મચારી ID</th><th>આપેલ મત</th><th>એક્શન (વોટ બદલો)</th></tr>
+                </thead>
                 <tbody id="voterLogTable"></tbody>
             </table>
         </div>
     </div>
 
     <script>
+        // તમારા Supabase ક્લાઉડ ડેટાબેઝનું સાચું ઓનલાઈન જોડાણ
         const SUPABASE_URL = "https://supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_O2NucTh0K_0Vl-Sdx2-q2Q_Tn3yG_5Z_6Vd_8U_1X_0Z_8W_2Q";
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -105,6 +109,8 @@
         let usedIds = {};
         let isPublished = JSON.parse(localStorage.getItem('p_f_v4')) || false;
         let currentVerifiedId = "";
+
+        // પૂરા ૩૦ દિવસ (૧ મહિનો) ચૂંટણી સમયગાળો
         let electionEndDate = localStorage.getItem('t_f_v4') || new Date().getTime() + (30 * 24 * 60 * 60 * 1000);
         localStorage.setItem('t_f_v4', electionEndDate);
 
@@ -115,7 +121,8 @@
         }
         setInterval(updateTimer, 1000); updateTimer();
 
-        async function handleFileUpload(event) {
+        // 📁 ફાઈલમાંથી ૫૦૦ કર્મચારીઓ લોડ કરવાનું પ્રોસેસ
+        function handleFileUpload(event) {
             const file = event.target.files[0]; if (!file) return;
             const reader = new FileReader();
             reader.onload = async function(e) {
@@ -132,14 +139,14 @@
                 localStorage.setItem('cand_list_v4', JSON.stringify(candidates));
                 localStorage.setItem('voter_db_v4', JSON.stringify(voterDb));
                 
-                // Supabase માંથી જૂનો ડેટા સાફ કરવો
+                // નવું લિસ્ટ અપલોડ કરતી વખતે જૂનો ઓનલાઈન ક્લાઉડ ડેટા ક્લિયર કરવો
                 await supabaseClient.from('votes').delete().neq('id', 0);
-                
                 fetchOnlineVotes();
-                alert("સફળતાપૂર્વક " + Object.keys(voterDb).length + " કર્મચારી ડેટા ઓનલાઈન લોડ થયો!");
+                alert(`સફળતાપૂર્વક ${Object.keys(voterDb).length} કર્મચારીઓનો ડેટા ઓનલાઈન લોડ થઈ ગયો છે!`);
             }; reader.readAsText(file);
         }
 
+        // 🌐 બધા જ ફોનમાંથી લાઈવ ડેટા ખેંચવાનું મુખ્ય ફંક્શન
         async function fetchOnlineVotes() {
             const { data, error } = await supabaseClient.from('votes').select('*');
             if (error) return;
@@ -150,18 +157,9 @@
             data.forEach(row => {
                 votes[row.voted_to] = (votes[row.voted_to] || 0) + 1;
                 voterLog.push({ id: row.voter_id, v: row.voted_to, rowId: row.id });
-                usedIds[row.voter_id] = true;
+                usedIds[row.voter_id] = true; // આ ફોન આઈડી લોક કરવો
             });
             checkResultPublishStatus();
         }
 
         function verifyVoterIdentity() {
-            const inputId = document.getElementById('voterIdInput').value.trim();
-            const errorMsg = document.getElementById('authErrorMsg');
-            if(!voterDb[inputId]) { errorMsg.innerText = "❌ આઈડી રજીસ્ટર્ડ નથી!"; errorMsg.style.display = "block"; return; }
-            if(usedIds[inputId]) { errorMsg.innerText = "⚠️ આ આઈડી પરથી વોટ અપાઈ ગયો છે!"; errorMsg.style.display = "block"; return; }
-            errorMsg.style.display = "none"; currentVerifiedId = inputId; checkResultPublishStatus();
-        }
-
-        function checkResultPublishStatus() {
-            if (isPublished) {
