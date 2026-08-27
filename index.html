@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>મહેસુલી કર્મચારી મંડળ ચૂંટણી</title>
+    <title>મહેસુલી કર્મચારી મંડળ સુરક્ષિત ચૂંટણી</title>
     <style>
         body { font-family: sans-serif; background-color: #f1f5f9; color: #334155; text-align: center; padding: 20px; }
         .container { max-width: 600px; width: 100%; background: #fff; padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); display: inline-block; }
@@ -21,17 +21,30 @@
         .change-btn { background: #ea580c; color: #fff; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
         .ctrl-btn { border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; color: #fff; }
         .file-input { margin: 10px 0; padding: 10px; background: #1e293b; border: 1px dashed #475569; border-radius: 6px; color: #fff; width: 100%; box-sizing: border-box; }
+        .voter-verify-box { background: #f8fafc; border: 1px solid #cbd5e1; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: left; }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h1>મહેસુલી કર્મચારી મંડળ ચૂંટણી</h1>
-        <div style="background:#fef2f2; color:#991b1b; padding:6px; border-radius:20px; font-weight:bold; margin-bottom:15px; display:inline-block;" id="countdown">૧૫ દિવસ બાકી</div>
+        <div style="background:#fef2f2; color:#991b1b; padding:6px 15px; border-radius:20px; font-weight:bold; margin-bottom:15px; display:inline-block;" id="countdown">૧ મહિનો બાકી</div>
 
-        <!-- 🗳️ મતદાન ફોર્મ (PDF અપલોડ કર્યા પછી અહિયાં નામ ઓટોમેટિક આવી જશે) -->
-        <div id="votingForm">
-            <p style="color:#64748b;" id="noDataMsg">કૃપા કરીને એડમીન પેનલમાંથી કર્મચારીઓની યાદી (PDF/Text) અપલોડ કરો.</p>
+        <!-- 🛡️ આઈડી વેરિફિકેશન സെક્શન -->
+        <div id="voterAuthForm" class="voter-verify-box">
+            <h4 style="margin-top:0; color:#1e3a8a;">🛡️ વોટર આઈડી ચકાસણી (ચીટિંગ પ્રોટેક્શન)</h4>
+            <label style="font-weight:bold; font-size:0.9rem;">તમારો કર્મચારી ID (Employee ID) લખો:</label>
+            <div style="margin-top:8px; display:flex; gap:10px;">
+                <input type="text" id="voterIdInput" placeholder="દા.ત. EMP101" style="padding:10px; border-radius:6px; border:1px solid #cbd5e1; flex:1;">
+                આઈડી ચેક કરો</button>
+            </div>
+            <p id="authErrorMsg" style="color:#dc2626; font-size:0.9rem; margin:5px 0 0 0; display:none; font-weight:bold;"></p>
+        </div>
+
+        <!-- 🗳️ મતદાન ફોર્મ -->
+        <div id="votingForm" class="hidden">
+            <p style="color:#166534; font-weight:bold; margin-bottom:15px; text-align:left;" id="welcomeVoterMsg"></p>
+            <div id="candidatesContainer"></div>
         </div>
 
         <div id="successMessage" class="success-box"><div>✓</div>તમારો મત સફળતાપૂર્વક પેટીમાં નોંધાઈ ગયો છે!</div>
@@ -45,7 +58,7 @@
 
     <!-- 🔐 એડમીન વિભાગ -->
     <div class="admin-section">
-        <button style="background:none; border:none; color:#64748b; cursor:pointer; text-decoration:underline;" onclick="document.getElementById('adminLoginForm').style.display='block'">🔐 ગુપ્ત એડમીન વિભાગ</button>
+        <button style="background:none; border:none; color:#64748b; cursor:pointer; text-decoration:underline;" onclick="toggleAdminForm()">🔐 ગુપ્ત એડમીન વિભાગ</button>
         <div id="adminLoginForm" style="display:none; margin-top:10px;">
             <input type="password" id="adminPassword" placeholder="ગુપ્ત પાસવર્ડ" style="padding:8px; border-radius:6px; border:1px solid #cbd5e1;">
             <button class="vote-btn" style="padding:8px 15px;" onclick="verifyAdmin()">પ્રવેશ કરો</button>
@@ -62,9 +75,9 @@
 
             <!-- 📄 ફાઈલ અપલોડ સેક્શન -->
             <div style="background:#1e293b; padding:12px; border-radius:8px; margin-top:15px;">
-                <h4 style="margin-top:0; color:#cbd5e1;">📋 કર્મચારીઓની યાદી અપલોડ કરો (PDF અક્ષરો અથવા સાદી Text ફાઇલ)</h4>
-                <input type="file" id="pdfUpload" class="file-input" accept=".txt,.pdf" onchange="handleFileUpload(event)">
-                <p style="font-size:0.8rem; color:#94a3b8; margin:0;">*નોંધ: સાદી ફાઇલમાં દરેક લાઇન પર એક જ કર્મચારીનું નામ હોવું જોઈએ.</p>
+                <h4 style="margin-top:0; color:#cbd5e1;">📋 કર્મચારીઓની આઈડી સાથેની યાદી અપલોડ કરો (.txt ફાઇલ)</h4>
+                <input type="file" id="pdfUpload" class="file-input" accept=".txt" onchange="handleFileUpload(event)">
+                <p style="font-size:0.8rem; color:#94a3b8; margin:0;">*ફોર્મેટ: નામ, કર્મચારીID (દા.ત. વિષ્ણૂ ભાઇ દેસાઇ, EMP101)</p>
             </div>
             
             <h4 style="margin-top:20px; color:#94a3b8;">📊 લાઇવ મત ગણતરી:</h4>
@@ -72,29 +85,37 @@
 
             <h4 style="margin-top: 20px; color: #94a3b8;">✏️ વોટ ચેન્જ કરવાનો ગુપ્ત વિભાગ</h4>
             <table class="log-table">
-                <thead><tr><th>વોટર ID</th><th>આપેલ મત</th><th>એક્શન</th></tr></thead>
+                <thead>
+                    <tr><th>વોટર ID (કર્મચારી ID)</th><th>આપેલ મત</th><th>એક્શન (વોટ બદલો)</th></tr>
+                </thead>
                 <tbody id="voterLogTable"></tbody>
             </table>
         </div>
     </div>
 
     <script>
-        // લોકલ સ્ટોરેજ ડેટા સેટઅપ
-        let candidates = JSON.parse(localStorage.getItem('cand_list')) || [];
-        let votes = JSON.parse(localStorage.getItem('v_f_v3')) || {};
-        let voterLog = JSON.parse(localStorage.getItem('l_f_v3')) || [];
-        let isPublished = JSON.parse(localStorage.getItem('p_f_v3')) || false;
-        let electionEndDate = localStorage.getItem('t_f_v3') || new Date().getTime() + (15 * 24 * 60 * 60 * 1000);
-        localStorage.setItem('t_f_v3', electionEndDate);
+        let candidates = JSON.parse(localStorage.getItem('cand_list_v4')) || [];
+        let voterDb = JSON.parse(localStorage.getItem('voter_db_v4')) || {};
+        let votes = JSON.parse(localStorage.getItem('v_f_v4')) || {};
+        let voterLog = JSON.parse(localStorage.getItem('l_f_v4')) || [];
+        let usedIds = JSON.parse(localStorage.getItem('used_ids_v4')) || {};
+        let isPublished = JSON.parse(localStorage.getItem('p_f_v4')) || false;
+        let currentVerifiedId = "";
+
+        let electionEndDate = localStorage.getItem('t_f_v4');
+        if (!electionEndDate) {
+            electionEndDate = new Date().getTime() + (30 * 24 * 60 * 60 * 1000); // ૩૦ દિવસ
+            localStorage.setItem('t_f_v4', electionEndDate);
+        }
 
         function updateTimer() {
             let diff = electionEndDate - new Date().getTime();
             let d = Math.floor(diff / (1000 * 60 * 60 * 24));
-            document.getElementById('countdown').innerText = diff < 0 ? "સમય પૂર્ણ!" : `⏱️ ચૂંટણી સમયગાળો: ${d} દિવસ બાકી`;
+            let h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            document.getElementById('countdown').innerText = diff < 0 ? "સમય પૂર્ણ!" : `⏱️ ચૂંટણી સમયગાળો: ${d} દિવસ, ${h} કલાક બાકી`;
         }
         setInterval(updateTimer, 1000); updateTimer();
 
-        // 📁 ફાઈલ અપલોડ પ્રોસેસ (નામ વાંચીને સીધા ઉમેદવાર બનાવવા)
         function handleFileUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -102,69 +123,59 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 const text = e.target.result;
-                // દરેક નવી લાઇનમાંથી નામ છૂટા પાડવા
                 const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
                 
-                if (lines.length === 0) {
-                    alert("ફાઈલ ખાલી છે અથવા નામ વંચાતા નથી!");
+                let newCandidates = [];
+                let newVoterDb = {};
+                let newVotes = {};
+
+                lines.forEach(line => {
+                    const parts = line.split(',');
+                    if(parts.length >= 2) {
+                        const name = parts[0].trim();
+                        const empId = parts[1].trim();
+                        if(!newCandidates.includes(name)) {
+                            newCandidates.push(name);
+                            newVotes[name] = 0;
+                        }
+                        newVoterDb[empId] = name;
+                    }
+                });
+
+                if (newCandidates.length === 0) {
+                    alert("ફાઈલ ફોર્મેટ ખોટું છે! કૃપા કરીને 'નામ, ID' મુજબ ફાઈલ બનાવો.");
                     return;
                 }
 
-                candidates = lines;
-                votes = {};
+                candidates = newCandidates;
+                voterDb = newVoterDb;
+                votes = newVotes;
                 voterLog = [];
-                candidates.forEach(name => { votes[name] = 0; }); // બધા ઉમેદવારોના વોટ 0 કરવા
+                usedIds = {};
 
-                localStorage.setItem('cand_list', JSON.stringify(candidates));
+                localStorage.setItem('cand_list_v4', JSON.stringify(candidates));
+                localStorage.setItem('voter_db_v4', JSON.stringify(voterDb));
+                localStorage.setItem('used_ids_v4', JSON.stringify(usedIds));
                 saveData();
                 checkResultPublishStatus();
-                alert(`${candidates.length} કર્મચારીઓના નામ સફળતાપૂર્વક અપલોડ થઈ ગયા છે!`);
+                alert(`સફળતાપૂર્વક ${Object.keys(voterDb).length} કર્મચારીના સિક્યોર આઈડી અપલોડ થઈ ગયા છે!`);
             };
             reader.readAsText(file);
         }
 
-        function checkResultPublishStatus() {
-            const votingForm = document.getElementById('votingForm');
-            const homeResultBox = document.getElementById('homeResultBox');
-            const finalResultsContainer = document.getElementById('finalResultsContainer');
-            const adminLiveVotes = document.getElementById('adminLiveVotes');
+        function verifyVoterIdentity() {
+            const inputId = document.getElementById('voterIdInput').value.trim();
+            const errorMsg = document.getElementById('authErrorMsg');
 
-            // જો કોઈ નામ અપલોડ ન થયા હોય
-            if (candidates.length === 0) {
-                document.getElementById('noDataMsg').style.display = 'block';
-                votingForm.innerHTML = "";
+            if(!inputId) {
+                errorMsg.innerText = "કૃપા કરીને આઈડી ખાલી ન મૂકો!";
+                errorMsg.style.display = "block";
                 return;
             }
-            document.getElementById('noDataMsg').style.display = 'none';
 
-            // વોટિંગ પેજ અથવા પરિણામ પેજ સેટ કરવું
-            if (isPublished) {
-                votingForm.style.display = 'none';
-                homeResultBox.style.display = 'block';
-                finalResultsContainer.innerHTML = "";
-                candidates.forEach(name => {
-                    finalResultsContainer.innerHTML += `<p style="font-weight:bold; font-size:1.1rem;">• ${name}: <span style="color:#2563eb;">${votes[name] || 0}</span> મત</p>`;
-                });
-                document.getElementById('publishBtnState').innerText = "🔒 પરિણામ છુપાવો";
-                document.getElementById('publishBtnState').style.background = "#d97706";
-            } else {
-                votingForm.style.display = 'block';
-                homeResultBox.style.display = 'none';
-                votingForm.innerHTML = "";
-                candidates.forEach(name => {
-                    votingForm.innerHTML += `<div class="card"><span class="name">${name}</span><button class="vote-btn" onclick="castVote('${name}')">Vote Now</button></div>`;
-                });
-                document.getElementById('publishBtnState').innerText = "📢 પરિણામ જાહેર કરો";
-                document.getElementById('publishBtnState').style.background = "#2563eb";
+            if(!voterDb[inputId]) {
+                errorMsg.innerText = "❌ આ આઈડી રજીસ્ટર્ડ નથી! સાચો ઓફિસ આઈડી લખો.";
+                errorMsg.style.display = "block";
+                return;
             }
 
-            // એડમીન લાઇવ વોટ અપડેટ
-            adminLiveVotes.innerHTML = "";
-            candidates.forEach(name => {
-                adminLiveVotes.innerHTML += `<p style="margin:6px 0;"><strong>${name}:</strong> <span style="color:#10b981; font-weight:bold;">${votes[name] || 0}</span> મત</p>`;
-            });
-
-            // એડમીન વોટ ચેન્જ ટેબલ અપડેટ
-            let tbody = document.getElementById('voterLogTable'); tbody.innerHTML = "";
-            voterLog.forEach((item, idx) => {
-                let optionsHtml = candidates.filter(name => name !== item.v).map(name => 
