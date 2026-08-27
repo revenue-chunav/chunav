@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>મહેસુલી કર્મચારી મંડળ ચૂંટણી</title>
-    <!-- Supabase JS Library -->
+    <!-- સત્તાવાર અને સૌથી સ્ટેબલ સુપાબેઝ લાઇબ્રેરી કનેક્શન -->
     <script src="https://jsdelivr.net"></script>
     <style>
         :root { --primary: #1e3a8a; --secondary: #10b981; --bg: #f3f4f6; --text: #1f2937; }
@@ -77,11 +77,12 @@
     </div>
 
     <script>
+        // આ લિંક અને આખી કી બરાબર ગોઠવી દીધી છે
         const SUPABASE_URL = "https://supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_O2NucTh0K_0Vl-Sdx2-q2Q_Tn3yG_5Z_6Vd_8U_1X_0Z_8W_2Q";
         
-        // અહીં કનેક્શન વેરિયેબલનું નામ બરાબર 'supabaseClient' સેટ કર્યું છે
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // ગ્લોબલ વેરિયેબલ સેટ કર્યો જેથી બ્રાઉઝર ભૂલ ન કાઢે
+        let _supabaseConn = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // ૧૫ દિવસનું ટાઈમર સેટઅપ
         let electionEndDate = new Date().getTime() + (15 * 24 * 60 * 60 * 1000);
@@ -93,10 +94,11 @@
             else { document.getElementById("countdown").innerHTML = `ચૂંટણી સમયગાળો: ${days} દિવસ બાકી`; }
         }
         setInterval(updateTimer, 1000);
+        updateTimer();
 
         // ઓનલાઈન વોટ આપવો
         async function castVote(candidateId) {
-            const { data, error } = await supabaseClient
+            const { data, error } = await _supabaseConn
                 .from('votes')
                 .insert([{ voted_to: candidateId }]);
 
@@ -108,19 +110,20 @@
                     document.getElementById('successMessage').style.display = 'none';
                 }, 3000);
             } else {
-                alert("વોટ સેવ કરવામાં ભૂલ આવી: " + error.message + "\nકૃપા કરીને Supabase માં RLS બંધ ચેક કરો.");
+                alert("વોટ સેવ કરવામાં ભૂલ આવી: " + error.message + "\nતમારા Supabase માં RLS સેટિંગ બંધ કરો.");
             }
         }
 
         function toggleAdminLogin() { document.getElementById('adminLoginForm').classList.toggle('hidden'); }
 
         function verifyAdmin() {
+            // એડમીન પાસવર્ડ: admin123
             if(document.getElementById('adminPassword').value === "admin123") {
                 document.getElementById('hiddenAdminPanel').classList.remove('hidden');
                 document.getElementById('adminLoginForm').classList.add('hidden');
                 loadLiveVotes();
                 
-                supabaseClient.channel('custom-all-channel')
+                _supabaseConn.channel('custom-all-channel')
                 .on('postgres_changes', { event: '*', filter: 'table=eq.votes' }, payload => {
                     loadLiveVotes();
                 }).subscribe();
@@ -129,7 +132,7 @@
 
         // એડમીન માટે લાઈવ ડેટા લોડ કરવો
         async function loadLiveVotes() {
-            const { data: votesData, error } = await supabaseClient
+            const { data: votesData, error } = await _supabaseConn
                 .from('votes')
                 .select('*')
                 .order('id', { ascending: true });
@@ -163,7 +166,7 @@
 
         // ઓનલાઈન વોટ બદલવો
         async function changeVote(voterRowId, newCandidateId) {
-            const { data, error } = await supabaseClient
+            const { data, error } = await _supabaseConn
                 .from('votes')
                 .update({ voted_to: newCandidateId })
                 .eq('id', voterRowId);
